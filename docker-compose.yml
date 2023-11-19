@@ -67,10 +67,4 @@ networks:
 
 volumes:
   db_data:
-  storage_data:
-  rabbitmq_data:
-  rabbitmq_logs:
-  traefik_tmp: { }
-  redis-master:
-  elasticsearch-data:
 
