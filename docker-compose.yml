@@ -1,7 +1,6 @@
 version: '3.7'
 
 services:
-
   postgres:
     image: 'postgres:latest'
     volumes:
@@ -77,5 +76,5 @@ networks:
     name: poplabng_network
 
 volumes:
-  db_data:
+  postgres_data:
 
