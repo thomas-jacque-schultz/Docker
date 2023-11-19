@@ -1,0 +1,50 @@
+#Principale Network Configuration
+
+networks:
+  default:
+    name: nextcloud_default
+    driver: bridge
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+#Container Configuration
+
+services:
+  nextcloud:
+    container_name: ${NEXTCLOUD_CONTAINER_NAME}
+    image: nextcloud
+    ports:
+      - "8080:80"
+    volumes:
+      - /home/data/hdd_save/NextCloud_Schub:/var/www/html
+    environment:
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - OVERWRITECLIURL=${URL_IN_DNS}
+      - OVERWRITEPROTOCOL=https
+      - TRUSTED_PROXIES=["*"]
+    depends_on: 
+      - nextcloud_db
+    logging: *default-logging 
+    restart: always
+
+  nextcloud_db:
+    container_name: ${NEXTCLOUD_DB_CONTAINER_NAME}
+    image: mariadb
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${NEXTCLOUD_DATA_PATH}:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    logging: *default-logging
+    restart: always

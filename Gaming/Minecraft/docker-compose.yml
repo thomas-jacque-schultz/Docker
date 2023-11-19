@@ -1,0 +1,95 @@
+#Principale Network Configuration
+
+networks:
+  default:
+    name: schub_network
+    external: true  
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+#Container Configuration
+
+services:
+
+  gaming-minecraft-ftb:
+    container_name: ${MINECRAFT_REVELATION_CONTAINER_NAME}
+    image: itzg/minecraft-server:java8-multiarch
+    ports:
+      - ${MINECRAFT_REVELATION_PORT_EXTERNAL}:${MINECRAFT_REVELATION_PORT_INTERNAL}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_REVELATION_SAVE_PATH}:/data
+    deploy:
+      resources:
+        limits:
+          memory: 4096M
+    env_file:
+      - ./ftb.env
+    logging: *default-logging
+    restart: unless-stopped
+
+  gaming-minecraft-miam:
+    container_name: ${MINECRAFT_PAPER_CONTAINER_NAME}
+    image: itzg/minecraft-server
+    ports:
+      - ${MINECRAFT_PAPER_PORT_EXTERNAL}:${MINECRAFT_PAPER_PORT_INTERNAL}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_PAPER_SAVE_PATH}:/data
+    deploy:
+      resources:
+        limits:
+          memory: 4096M
+    stdin_open: true
+    tty: true
+    env_file:
+      - ./miam.env
+    logging: *default-logging
+    restart: unless-stopped    
+
+  gaming-minecraft-lycee:
+    container_name: ${MINECRAFT_LYCEE_CONTAINER_NAME}
+    image: itzg/minecraft-server
+    ports:
+      - ${MINECRAFT_LYCEE_PORT_EXTERNAL}:${MINECRAFT_LYCEE_PORT_INTERNAL}
+    volumes:
+     - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_LYCEE_SAVE_PATH}:/data 
+    environment:
+      EULA: "TRUE"        
+      ENABLE_RCON: "true" 
+      RCON_PASSWORD: ${MINECRAFT_LYCEE_PASSWORD}
+      RCON_PORT: ${MINECRAFT_LYCEE_RCON_INTERNAL}
+      TYPE: "paper"
+    restart: always 
+
+
+  gaming-minecraft-stacia:
+    container_name: ${MINECRAFT_STACIA_CONTAINER_NAME}
+    image: itzg/minecraft-server
+    ports:
+      - ${MINECRAFT_STACIA_EXTERNAL_PORT}:${MINECRAFT_STACIA_INTERNAL_PORT}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_STACIA_SAVE_PATH}:/data
+    environment:
+      EULA: "TRUE"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: ${MINECRAFT_STACIA_PASSWORD}
+      RCON_PORT: ${MINECRAFT_STACIA_RCON_INTERNAL}
+      MOD_PLATFORM: AUTO_CURSEFORGE
+      CF_SLUG: stacia-2-expert
+      CF_API_KEY: ${CF_API_KEY}
+      MEMORY: 6G
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+    logging: *default-logging
+    restart: unless-stopped
+

@@ -1,0 +1,87 @@
+#Principale Network Configuration
+
+networks:
+  default:
+    name: Monitoring
+    driver: bridge
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+#Container Configuration
+
+services:
+
+  monitoring-prometheus:
+    container_name: monitoring-prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${PROMETHEUS_PATH}/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    logging: *default-logging
+    restart: unless-stopped
+
+  monitoring-cadvisor:
+    container_name: monitoring-cadvisor
+    image: gcr.io/cadvisor/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: unless-stopped
+
+  monitoring-grafana:
+    container_name: monitoring-grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${GRAFANA_PATH}:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+    logging: *default-logging
+    restart: unless-stopped
+
+  monitoring-loki:
+    container_name: monitoring-loki
+    image: grafana/loki:2.9.0
+    ports:
+      - "3100:3100"
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${LOKI_PATH}/loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    logging: *default-logging
+    restart: unless-stopped
+
+  monitoring-promtail:
+    container_name: monitoring-promtail
+    image: grafana/promtail:2.9.0
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/log:/var/log
+      - ${ROOT_PROJECT_DATA_DIR}/${PROMTAIL_PATH}/docker-config.yml:/etc/promtail/docker-config.yml
+    command: -config.file=/etc/promtail/docker-config.yml
+    logging: *default-logging
+    restart: unless-stopped
+
+  monitoring-node-exporter:
+    container_name: monitoring-node-exporter
+    image: prom/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
