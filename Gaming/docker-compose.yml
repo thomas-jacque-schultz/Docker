@@ -1,0 +1,86 @@
+#Principale Network Configuration
+
+networks:
+  default:
+    name: schub_network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+#Container Configuration
+
+services:
+
+  gaming-palworld:
+    container_name: ${PALWORLD_CONTAINER_NAME}
+    image: thijsvanloef/palworld-server-docker:latest
+    ports:
+      - ${EXTERNAL_PALWORLD_PORT}:${INTERNAL_PALWORLD_UDP_PORT}
+      - ${EXTERNAL_PALWORLD_RECON_PORT}:${INTERNAL_PALWORLD_RECON_UDP_PORT}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${PALWORLD_SAVE_PATH}:/palworld/
+    stop_grace_period: 30s # Set to however long you are willing to wait for the container to gracefully stop
+    deploy:
+      resources:
+        limits:
+          memory: 12G
+    env_file:
+      - ./palworld.env
+    logging: *default-logging
+    restart: unless-stopped
+
+  server-manager:
+    container_name: ${ASSETTO_CONTAINER_NAME}
+    image: seejy/assetto-server-manager:latest
+    ports:
+      - ${EXTERNAL_ASSETTO_PORT}:${INTERNAL_ASSETTO_PORT}
+      - ${EXTERNAL_ASSETTO_HTTP_PORT}:${INTERNAL_ASSETTO_HTTP_PORT}
+      - ${EXTERNAL_ASSETTO_GAME_PORT}:${INTERNAL_ASSETTO_GAME_PORT}
+      - ${EXTERNAL_ASSETTO_GAME_PORT}:${INTERNAL_ASSETTO_GAME_PORT_UDP}
+      - ${EXTERNAL_ASSETTO_WRAPPER_PORT}:${INTERNAL_ASSETTO_WRAPPER_PORT}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${ASSETTO_SAVE_PATH}/server-install:/home/assetto/server-manager/assetto
+      - ${ROOT_PROJECT_DATA_DIR}/${ASSETTO_SAVE_PATH}/config.yml:/home/assetto/server-manager/config.yml
+    logging: *default-logging
+    restart: unless-stopped
+
+  satisfactory-server:
+    container_name: ${SATISFACTORY_CONTAINER_NAME}
+    image: 'wolveix/satisfactory-server:latest'
+    ports:
+      - ${EXTERNAL_SATISFACTORY_GAME_PORT}:${INTERNAL_SATISFACTORY_GAME_PORT}
+      - ${EXTERNAL_SATISFACTORY_BEACON_PORT}:${INTERNAL_SATISFACTORY_BEACON_PORT}
+      - ${EXTERNAL_SATISFACTORY_QUERY_PORT}:${INTERNAL_SATISFACTORY_QUERY_PORT}
+    volumes:
+      -  ${ROOT_PROJECT_DATA_DIR}/${SATISFACTORY_SAVE_PATH}:/config
+    hostname: ${SATISFACTORY_HOSTNAME}
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+        reservations:
+          memory: 10G
+    env_file:
+      - ./satisfactory.env
+    logging: *default-logging
+    restart: unless-stopped
+
+  return-moria:
+    container_name: ${MORIA_CONTAINER_NAME}
+    image: andrewsav/moria
+    stop_signal: SIGINT # This is for graceful termination, do not change it, unless you know what you are doing
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MORIA_SAVE_PATH}/server:/server # dedicated server files
+      - ${ROOT_PROJECT_DATA_DIR}/${MORIA_SAVE_PATH}/steam:/root/Steam # moria config files
+    ports:
+      - ${MORIA_PORT_EXTERNAL}:${MORIA_PORT_INTERNAL}/udp
+    logging: *default-logging
+    restart: unless-stopped
