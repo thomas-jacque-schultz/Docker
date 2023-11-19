@@ -1,0 +1,76 @@
+version: '3.7'
+
+services:
+
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+  keycloak:
+    image: quay.io/keycloak/keycloak:legacy
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_USER: local
+      KEYCLOAK_PASSWORD: local
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+  back:
+    container_name: schub_front
+    build: ./../Back
+    ports:
+      - "8090:8090"
+    restart: on-failure
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+  front :
+    container_name: schub_front
+    build: ./../Front
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+
+  minecraft:
+    image: itzg/minecraft-server
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: "TRUE"
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
+    volumes:
+      - "~/minecraft_data:/data"
+
+networks:
+  default:
+    name: poplabng_network
+
+volumes:
+  db_data:
+  storage_data:
+  rabbitmq_data:
+  rabbitmq_logs:
+  traefik_tmp: { }
+  redis-master:
+  elasticsearch-data:
+
