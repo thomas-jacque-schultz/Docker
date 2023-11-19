@@ -26,7 +26,7 @@ services:
     depends_on:
       - postgres
   back:
-    container_name: schub_front
+    container_name: schub_back
     build: ./../Back
     ports:
       - "8090:8090"
