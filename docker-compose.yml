@@ -3,6 +3,7 @@ version: '3.7'
 services:
   postgres:
     image: 'postgres:latest'
+    container_name: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -14,6 +15,7 @@ services:
 
   rabbitmq:
     image: 'rabbitmq:latest'
+    container_name: rabbitmq
     environment:
       - 'RABBITMQ_DEFAULT_PASS=secret'
       - 'RABBITMQ_DEFAULT_USER=myuser'
@@ -22,6 +24,7 @@ services:
 
   portainer:
     image: portainer/portainer-ce:latest
+    container_name: portainer
     ports:
       - 9443:9443
     volumes:
@@ -31,6 +34,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:legacy
+    container_name: keycloak
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
@@ -69,6 +73,7 @@ services:
 
   minecraft:
     image: itzg/minecraft-server
+    container_name: minecraft
     ports:
       - "25565:25565"
     environment:
