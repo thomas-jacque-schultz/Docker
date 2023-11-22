@@ -1,0 +1,7 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"OnlineServicesEOS": "libUnrealServer-OnlineServicesEOS-Linux-Shipping.so"
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"MeshModelingTools": "libUnrealServer-MeshModelingTools-Linux-Shipping.so",
+		"ModelingComponents": "libUnrealServer-ModelingComponents-Linux-Shipping.so",
+		"ModelingOperators": "libUnrealServer-ModelingOperators-Linux-Shipping.so"
+	}
+}

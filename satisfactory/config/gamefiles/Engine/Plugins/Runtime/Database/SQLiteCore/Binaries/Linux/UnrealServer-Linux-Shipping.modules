@@ -1,0 +1,7 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"SQLiteCore": "libUnrealServer-SQLiteCore-Linux-Shipping.so"
+	}
+}

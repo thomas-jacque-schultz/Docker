@@ -1,0 +1,11 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"ExrReaderGpu": "libUnrealServer-ExrReaderGpu-Linux-Shipping.so",
+		"ImgMedia": "libUnrealServer-ImgMedia-Linux-Shipping.so",
+		"ImgMediaEngine": "libUnrealServer-ImgMediaEngine-Linux-Shipping.so",
+		"ImgMediaFactory": "libUnrealServer-ImgMediaFactory-Linux-Shipping.so",
+		"OpenExrWrapper": "libUnrealServer-OpenExrWrapper-Linux-Shipping.so"
+	}
+}

@@ -1,0 +1,8 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"DynamicMesh": "libUnrealServer-DynamicMesh-Linux-Shipping.so",
+		"GeometryAlgorithms": "libUnrealServer-GeometryAlgorithms-Linux-Shipping.so"
+	}
+}

@@ -1,0 +1,7 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"GameplayCameras": "libUnrealServer-GameplayCameras-Linux-Shipping.so"
+	}
+}

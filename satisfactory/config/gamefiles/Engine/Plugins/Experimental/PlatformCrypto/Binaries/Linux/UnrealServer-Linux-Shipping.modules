@@ -1,0 +1,9 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"PlatformCrypto": "libUnrealServer-PlatformCrypto-Linux-Shipping.so",
+		"PlatformCryptoOpenSSL": "libUnrealServer-PlatformCryptoOpenSSL-Linux-Shipping.so",
+		"PlatformCryptoTypes": "libUnrealServer-PlatformCryptoTypes-Linux-Shipping.so"
+	}
+}

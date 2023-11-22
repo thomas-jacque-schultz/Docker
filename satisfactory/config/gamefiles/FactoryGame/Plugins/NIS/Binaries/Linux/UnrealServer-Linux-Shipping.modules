@@ -1,0 +1,9 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"NISBlueprint": "libUnrealServer-NISBlueprint-Linux-Shipping.so",
+		"NISCore": "libUnrealServer-NISCore-Linux-Shipping.so",
+		"NISShaders": "libUnrealServer-NISShaders-Linux-Shipping.so"
+	}
+}

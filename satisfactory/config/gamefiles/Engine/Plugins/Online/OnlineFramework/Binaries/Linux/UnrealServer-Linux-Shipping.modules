@@ -1,0 +1,13 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"Hotfix": "libUnrealServer-Hotfix-Linux-Shipping.so",
+		"Lobby": "libUnrealServer-Lobby-Linux-Shipping.so",
+		"Party": "libUnrealServer-Party-Linux-Shipping.so",
+		"PatchCheck": "libUnrealServer-PatchCheck-Linux-Shipping.so",
+		"PlayTimeLimit": "libUnrealServer-PlayTimeLimit-Linux-Shipping.so",
+		"Qos": "libUnrealServer-Qos-Linux-Shipping.so",
+		"Rejoin": "libUnrealServer-Rejoin-Linux-Shipping.so"
+	}
+}

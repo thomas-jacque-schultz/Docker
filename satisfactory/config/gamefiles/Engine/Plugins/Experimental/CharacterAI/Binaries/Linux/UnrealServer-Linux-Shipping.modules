@@ -1,0 +1,7 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"CharacterAI": "libUnrealServer-CharacterAI-Linux-Shipping.so"
+	}
+}

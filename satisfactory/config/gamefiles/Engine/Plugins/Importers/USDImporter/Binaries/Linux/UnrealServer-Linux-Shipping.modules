@@ -1,0 +1,8 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"USDClasses": "libUnrealServer-USDClasses-Linux-Shipping.so",
+		"UnrealUSDWrapper": "libUnrealServer-UnrealUSDWrapper-Linux-Shipping.so"
+	}
+}

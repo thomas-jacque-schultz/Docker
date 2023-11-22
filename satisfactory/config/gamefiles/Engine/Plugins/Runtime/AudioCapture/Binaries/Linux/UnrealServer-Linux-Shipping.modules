@@ -1,0 +1,7 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"AudioCapture": "libUnrealServer-AudioCapture-Linux-Shipping.so"
+	}
+}

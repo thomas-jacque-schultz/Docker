@@ -1,0 +1,8 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"DataflowEnginePlugin": "libUnrealServer-DataflowEnginePlugin-Linux-Shipping.so",
+		"DataflowNodes": "libUnrealServer-DataflowNodes-Linux-Shipping.so"
+	}
+}

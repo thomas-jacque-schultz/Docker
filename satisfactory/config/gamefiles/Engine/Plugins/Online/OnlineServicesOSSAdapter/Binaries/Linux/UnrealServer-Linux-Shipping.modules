@@ -1,0 +1,7 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"OnlineServicesOSSAdapter": "libUnrealServer-OnlineServicesOSSAdapter-Linux-Shipping.so"
+	}
+}

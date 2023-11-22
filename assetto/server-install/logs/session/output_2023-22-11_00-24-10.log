@@ -1,0 +1,198 @@
+Server CFG Path :  cfg/server_cfg.ini
+Entry List Path :  cfg/entry_list.ini
+Assetto Corsa Dedicated Server v1.15
+Protocol version: 202
+2023-11-22 00:24:10.600394135 +0000 UTC
+Num CPU: 8
+LOCAL IP 0: 172.22.0.9
+Using cfg path:  cfg/server_cfg.ini
+Car list:
+_alfa_romeo_giulietta_qv_le_
+_bmw_1m_
+_bmw_1m_s3_
+_ks_ferrari_f2004_
+Client interval HZ: 18
+WARNING: pitstop window needs a valid range
+WARNING: MAX_CONTACTS_PER_KM disabled
+AUTH_PLUGIN_ADDRESS 
+Initialising UDP Plugin with target: 127.0.0.1:45061 on the local port 33055
+WARNING: Admin Password not set, admin commans disabled
+TRACK=spa
+CARS=["alfa_romeo_giulietta_qv_le" "bmw_1m" "bmw_1m_s3" "ks_ferrari_f2004"]
+Loading PRACTICE session
+SESSION: Practice
+TYPE=PRACTICE
+TIME=60
+LAPS=0
+OPEN=1
+WAIT TIME=0
+
+Loading QUALIFY session
+SESSION: Qualify
+TYPE=QUALIFY
+TIME=30
+LAPS=0
+OPEN=1
+WAIT TIME=0
+
+SESSION: Race
+TYPE=RACE
+TIME=0
+LAPS=55
+OPEN=1
+WAIT TIME=60
+
+DynamicTrack: first session, resetting grip
+Trying to load DRS zones from: content/tracks/spa/data/drs_zones.ini
+Loading ZONE_0 {0.981 0.05}
+Loading ZONE_1 {0.234 0.334}
+Weather update. Ambient: 26.222393 Road: 37.61788 Graphics: 3_clear
+Wind update. Speed: 0 Direction: 0
+
+CHECKSUM: system/data/surfaces.ini=41949b9f7045cad2af3f5eb951d170a9
+CHECKSUM: content/tracks/spa/data/surfaces.ini=0b8998a173f8b4f293bd5957160050dd
+CHECKSUM: content/tracks/spa/models.ini=680bd86555ac11fccaa3ef7bce928ae3
+ACD CHECKSUM:7024cb554fc08df633a5f5d0c2b7fa4a
+ACD CHECKSUM:a0b313489263ca637d3b5ffa2da63dd0
+ACD CHECKSUM:abdd7e420fd395847e8f8a7db4e299fc
+Calculating checksum for folder content/cars/ks_ferrari_f2004/data
+Error calculating checksum: Folder not found
+Loading blacklist
+Opening entry list:  cfg/entry_list.ini
+Found car  CAR_0
+CAR: 0 bmw_1m_s3 (0) [ []]  []  Ballast: 0 kg
+CAR: 0 bmw_1m_s3 (0) [ []]  []  Restrictor: 0
+open setups/bmw_1m_s3.ini: no such file or directory
+Found car  CAR_1
+CAR: 1 ks_ferrari_f2004 (1) [ []]  []  Ballast: 0 kg
+CAR: 1 ks_ferrari_f2004 (1) [ []]  []  Restrictor: 0
+open setups/ks_ferrari_f2004.ini: no such file or directory
+Found car  CAR_2
+CAR: 2 bmw_1m (2) [ []]  []  Ballast: 0 kg
+CAR: 2 bmw_1m (2) [ []]  []  Restrictor: 0
+open setups/bmw_1m.ini: no such file or directory
+Found car  CAR_3
+CAR: 3 bmw_1m_s3 (3) [ []]  []  Ballast: 0 kg
+CAR: 3 bmw_1m_s3 (3) [ []]  []  Restrictor: 0
+open setups/bmw_1m_s3.ini: no such file or directory
+Found car  CAR_4
+CAR: 4 alfa_romeo_giulietta_qv_le (4) [ []]  []  Ballast: 0 kg
+CAR: 4 alfa_romeo_giulietta_qv_le (4) [ []]  []  Restrictor: 0
+open setups/alfa_romeo_giulietta_qv_le.ini: no such file or directory
+Found car  CAR_5
+CAR: 5 alfa_romeo_giulietta_qv_le (5) [ []]  []  Ballast: 0 kg
+CAR: 5 alfa_romeo_giulietta_qv_le (5) [ []]  []  Restrictor: 0
+open setups/alfa_romeo_giulietta_qv_le.ini: no such file or directory
+Found car  CAR_6
+CAR: 6 bmw_1m (6) [ []]  []  Ballast: 0 kg
+CAR: 6 bmw_1m (6) [ []]  []  Restrictor: 0
+open setups/bmw_1m.ini: no such file or directory
+Found car  CAR_7
+CAR: 7 bmw_1m (7) [ []]  []  Ballast: 0 kg
+CAR: 7 bmw_1m (7) [ []]  []  Restrictor: 0
+open setups/bmw_1m.ini: no such file or directory
+Found car  CAR_8
+CAR: 8 alfa_romeo_giulietta_qv_le (8) [ []]  []  Ballast: 0 kg
+CAR: 8 alfa_romeo_giulietta_qv_le (8) [ []]  []  Restrictor: 0
+open setups/alfa_romeo_giulietta_qv_le.ini: no such file or directory
+Found car  CAR_9
+CAR: 9 ks_ferrari_f2004 (9) [ []]  []  Ballast: 0 kg
+CAR: 9 ks_ferrari_f2004 (9) [ []]  []  Restrictor: 0
+open setups/ks_ferrari_f2004.ini: no such file or directory
+Found car  CAR_10
+CAR: 10 alfa_romeo_giulietta_qv_le (10) [ []]  []  Ballast: 0 kg
+CAR: 10 alfa_romeo_giulietta_qv_le (10) [ []]  []  Restrictor: 0
+open setups/alfa_romeo_giulietta_qv_le.ini: no such file or directory
+Found car  CAR_11
+CAR: 11 bmw_1m (11) [ []]  []  Ballast: 0 kg
+CAR: 11 bmw_1m (11) [ []]  []  Restrictor: 0
+open setups/bmw_1m.ini: no such file or directory
+Found car  CAR_12
+CAR: 12 bmw_1m (12) [ []]  []  Ballast: 0 kg
+CAR: 12 bmw_1m (12) [ []]  []  Restrictor: 0
+open setups/bmw_1m.ini: no such file or directory
+Found car  CAR_13
+CAR: 13 alfa_romeo_giulietta_qv_le (13) [ []]  []  Ballast: 0 kg
+CAR: 13 alfa_romeo_giulietta_qv_le (13) [ []]  []  Restrictor: 0
+open setups/alfa_romeo_giulietta_qv_le.ini: no such file or directory
+Found car  CAR_14
+CAR: 14 bmw_1m_s3 (14) [ []]  []  Ballast: 0 kg
+CAR: 14 bmw_1m_s3 (14) [ []]  []  Restrictor: 0
+open setups/bmw_1m_s3.ini: no such file or directory
+Found car  CAR_15
+CAR: 15 ks_ferrari_f2004 (15) [ []]  []  Ballast: 0 kg
+CAR: 15 ks_ferrari_f2004 (15) [ []]  []  Restrictor: 0
+open setups/ks_ferrari_f2004.ini: no such file or directory
+Found car  CAR_16
+CAR: 16 bmw_1m_s3 (16) [ []]  []  Ballast: 0 kg
+CAR: 16 bmw_1m_s3 (16) [ []]  []  Restrictor: 0
+open setups/bmw_1m_s3.ini: no such file or directory
+Found car  CAR_17
+CAR: 17 ks_ferrari_f2004 (17) [ []]  []  Ballast: 0 kg
+CAR: 17 ks_ferrari_f2004 (17) [ []]  []  Restrictor: 0
+open setups/ks_ferrari_f2004.ini: no such file or directory
+Random seed: 527210785
+Starting TCP listener at port 9600
+Session has 0 laps, will not save json
+NextSession
+SESSION: Practice
+TYPE=PRACTICE
+TIME=60
+LAPS=0
+OPEN=1
+WAIT TIME=0
+
+DynamicTrack: first session, resetting grip
+Weather update. Ambient: 25.762306 Road: 37.118423 Graphics: 3_clear
+Wind update. Speed: 0 Direction: 0
+No laptime available, use car index for grids
+POS: 1, SessionID:0
+POS: 2, SessionID:1
+Starting HTTP server on port  8081
+POS: 3, SessionID:2
+POS: 4, SessionID:3
+POS: 5, SessionID:4
+POS: 6, SessionID:5
+POS: 7, SessionID:6
+POS: 8, SessionID:7
+POS: 9, SessionID:8
+POS: 10, SessionID:9
+POS: 11, SessionID:10
+POS: 12, SessionID:11
+POS: 13, SessionID:12
+POS: 14, SessionID:13
+POS: 15, SessionID:14
+POS: 16, SessionID:15
+POS: 17, SessionID:16
+POS: 18, SessionID:17
+SENDING session name : Practice
+SENDING session index : 0
+SENDING session type : 1
+SENDING session time : 60
+SENDING session laps : 0
+Server started
+UDP_PLUGIN: Realtime pos interval now set to: 500 ms
+Registering to AC central server
+CALLING http://93.57.10.21/lobby.ashx/register?name=Assetto+Corsa+Server+-+F2004+at+Spa&port=9600&tcp_port=9600&max_clients=18&track=spa&cars=alfa_romeo_giulietta_qv_le%2Cbmw_1m%2Cbmw_1m_s3%2Cks_ferrari_f2004&timeofday=48&sessions=1,2,3&durations=3600,1800,55&password=0&version=202&pickup=1&autoclutch=0&abs=1&tc=1&stability=0&legal_tyres=M;S;ST;SM&fixed_setup=0&timed=0&extra=0&pit=0&inverted=0
+RESPONSE: ERROR,INVALID SERVER,CHECK YOUR PORT FORWARDING SETTINGS
+CONNECTION TO LOBBY FAILED, ATTEMPT NUMBER  1
+Registering to AC central server
+CALLING http://93.57.10.21/lobby.ashx/register?name=Assetto+Corsa+Server+-+F2004+at+Spa&port=9600&tcp_port=9600&max_clients=18&track=spa&cars=alfa_romeo_giulietta_qv_le%2Cbmw_1m%2Cbmw_1m_s3%2Cks_ferrari_f2004&timeofday=48&sessions=1,2,3&durations=3600,1800,55&password=0&version=202&pickup=1&autoclutch=0&abs=1&tc=1&stability=0&legal_tyres=M;S;ST;SM&fixed_setup=0&timed=0&extra=0&pit=0&inverted=0
+RESPONSE: ERROR,INVALID SERVER,CHECK YOUR PORT FORWARDING SETTINGS
+CONNECTION TO LOBBY FAILED, ATTEMPT NUMBER  2
+Registering to AC central server
+CALLING http://93.57.10.21/lobby.ashx/register?name=Assetto+Corsa+Server+-+F2004+at+Spa&port=9600&tcp_port=9600&max_clients=18&track=spa&cars=alfa_romeo_giulietta_qv_le%2Cbmw_1m%2Cbmw_1m_s3%2Cks_ferrari_f2004&timeofday=48&sessions=1,2,3&durations=3600,1800,55&password=0&version=202&pickup=1&autoclutch=0&abs=1&tc=1&stability=0&legal_tyres=M;S;ST;SM&fixed_setup=0&timed=0&extra=0&pit=0&inverted=0
+RESPONSE: ERROR,INVALID SERVER,CHECK YOUR PORT FORWARDING SETTINGS
+CONNECTION TO LOBBY FAILED, ATTEMPT NUMBER  3
+Registering to AC central server
+CALLING http://93.57.10.21/lobby.ashx/register?name=Assetto+Corsa+Server+-+F2004+at+Spa&port=9600&tcp_port=9600&max_clients=18&track=spa&cars=alfa_romeo_giulietta_qv_le%2Cbmw_1m%2Cbmw_1m_s3%2Cks_ferrari_f2004&timeofday=48&sessions=1,2,3&durations=3600,1800,55&password=0&version=202&pickup=1&autoclutch=0&abs=1&tc=1&stability=0&legal_tyres=M;S;ST;SM&fixed_setup=0&timed=0&extra=0&pit=0&inverted=0
+RESPONSE: ERROR,INVALID SERVER,CHECK YOUR PORT FORWARDING SETTINGS
+CONNECTION TO LOBBY FAILED, ATTEMPT NUMBER  4
+Registering to AC central server
+CALLING http://93.57.10.21/lobby.ashx/register?name=Assetto+Corsa+Server+-+F2004+at+Spa&port=9600&tcp_port=9600&max_clients=18&track=spa&cars=alfa_romeo_giulietta_qv_le%2Cbmw_1m%2Cbmw_1m_s3%2Cks_ferrari_f2004&timeofday=48&sessions=1,2,3&durations=3600,1800,55&password=0&version=202&pickup=1&autoclutch=0&abs=1&tc=1&stability=0&legal_tyres=M;S;ST;SM&fixed_setup=0&timed=0&extra=0&pit=0&inverted=0
+RESPONSE: ERROR,INVALID SERVER,CHECK YOUR PORT FORWARDING SETTINGS
+CONNECTION TO LOBBY FAILED, ATTEMPT NUMBER  5
+Registering to AC central server
+CALLING http://93.57.10.21/lobby.ashx/register?name=Assetto+Corsa+Server+-+F2004+at+Spa&port=9600&tcp_port=9600&max_clients=18&track=spa&cars=alfa_romeo_giulietta_qv_le%2Cbmw_1m%2Cbmw_1m_s3%2Cks_ferrari_f2004&timeofday=48&sessions=1,2,3&durations=3600,1800,55&password=0&version=202&pickup=1&autoclutch=0&abs=1&tc=1&stability=0&legal_tyres=M;S;ST;SM&fixed_setup=0&timed=0&extra=0&pit=0&inverted=0
+RESPONSE: ERROR,INVALID SERVER,CHECK YOUR PORT FORWARDING SETTINGS
+LOBBY COULD NOT BE RACHED, SHUTTING SERVER DOWN

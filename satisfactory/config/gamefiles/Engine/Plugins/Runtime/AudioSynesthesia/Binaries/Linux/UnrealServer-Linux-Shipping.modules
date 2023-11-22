@@ -1,0 +1,8 @@
+{
+	"BuildId": "264901",
+	"Modules": 
+	{
+		"AudioSynesthesia": "libUnrealServer-AudioSynesthesia-Linux-Shipping.so",
+		"AudioSynesthesiaCore": "libUnrealServer-AudioSynesthesiaCore-Linux-Shipping.so"
+	}
+}
