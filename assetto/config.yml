@@ -150,7 +150,7 @@ accounts:
   # username: admin
   # password: servermanager
   # As soon as you log in, you will be immediately asked to set a new password.
-  admin_password_override:
+  admin_password_override: passwordMiam
 
 ################################################################################
 #
