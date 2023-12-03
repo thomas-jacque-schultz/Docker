@@ -32,7 +32,7 @@ services:
   auth:
     image: quay.io/keycloak/keycloak
     ports:
-      - "8080:8080"
+      - "9000:9000"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
