@@ -19,7 +19,7 @@ steam:
   password:
 
   # where to install assetto corsa server
-  install_path: ./assetto/server-install
+  install_path: assetto/server-install
 
   # the path to the executable to run. relative to the install_path by default
   executable_path: acServer
