@@ -161,6 +161,9 @@ services:
           memory: 4G
 
 networks:
+  local:
+    name: local
+    driver: bridge
   default:
     name: poplabng_network
 
