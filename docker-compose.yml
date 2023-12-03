@@ -139,6 +139,23 @@ services:
         reservations:
           memory: 4G
 
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - VERSION=docker
+      - PLEX_CLAIM= #optional
+    volumes:
+      - ./plex/library:/config
+      - ./plex/tvseries:/tv
+      - ./plex/movies:/movies
+    restart: unless-stopped
+
+
 networks:
   default:
     name: schub_network
