@@ -112,10 +112,10 @@ services:
     volumes:
       # volume mount the entire server install so that
       # content etc persists across restarts
-      - ./assetto/server-install:/home/assetto/server-manager/assetto
+      - assetto/server-install:/home/assetto/server-manager/assetto
 
       # volume mount the config
-      - ./assetto/config.yml:/home/assetto/server-manager/config.yml
+      - assetto/config.yml:/home/assetto/server-manager/config.yml
 
   satisfactory-server:
     container_name: 'satisfactory-server'

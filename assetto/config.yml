@@ -116,7 +116,7 @@ store:
   #               store_path
   #
   # boltdb is recommended for most users.
-  type: boltdb
+  type: json
 
   # where to save the server manager data
   path: server_manager.db
