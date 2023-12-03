@@ -17,8 +17,6 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: keycloak
       POSTGRES_HOST: postgres
-    networks:
-      - local
     ports:
       - "5432:5432"
 
@@ -30,8 +28,6 @@ services:
         PGADMIN_DEFAULT_PASSWORD: postgres
       ports:
         - "5050:80"
-      networks:
-        - local
 
   auth:
     image: quay.io/keycloak/keycloak
