@@ -132,7 +132,6 @@ services:
       - PGID=1000
       - PUID=1000
       - STEAMBETA=false
-    restart: unless-stopped
     deploy:
       resources:
         limits:

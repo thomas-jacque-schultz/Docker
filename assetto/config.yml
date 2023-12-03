@@ -19,7 +19,7 @@ steam:
   password:
 
   # where to install assetto corsa server
-  install_path: ./assetto/server-install
+  install_path: assetto
 
   # the path to the executable to run. relative to the install_path by default
   executable_path: acServer
@@ -119,7 +119,7 @@ store:
   type: json
 
   # where to save the server manager data
-  path: server_manager.db
+  path: test.db
 
   # shared data path: Set the same directory for multiple AC Server Manager
   # instances to share accounts, race weekend, championship, entrants and custom
@@ -150,7 +150,7 @@ accounts:
   # username: admin
   # password: servermanager
   # As soon as you log in, you will be immediately asked to set a new password.
-  admin_password_override: passwordMiam
+  admin_password_override:
 
 ################################################################################
 #
