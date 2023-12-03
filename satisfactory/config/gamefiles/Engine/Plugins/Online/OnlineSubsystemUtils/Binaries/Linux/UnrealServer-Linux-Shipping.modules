@@ -1,7 +1,0 @@
-{
-	"BuildId": "264901",
-	"Modules": 
-	{
-		"OnlineSubsystemUtils": "libUnrealServer-OnlineSubsystemUtils-Linux-Shipping.so"
-	}
-}

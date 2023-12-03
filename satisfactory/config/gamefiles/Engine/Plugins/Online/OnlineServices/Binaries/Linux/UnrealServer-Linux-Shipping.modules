@@ -1,9 +1,0 @@
-{
-	"BuildId": "264901",
-	"Modules": 
-	{
-		"OnlineServicesCommon": "libUnrealServer-OnlineServicesCommon-Linux-Shipping.so",
-		"OnlineServicesCommonEngineUtils": "libUnrealServer-OnlineServicesCommonEngineUtils-Linux-Shipping.so",
-		"OnlineServicesInterface": "libUnrealServer-OnlineServicesInterface-Linux-Shipping.so"
-	}
-}

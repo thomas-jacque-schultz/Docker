@@ -1,7 +1,0 @@
-{
-	"BuildId": "264901",
-	"Modules": 
-	{
-		"UdpMessaging": "libUnrealServer-UdpMessaging-Linux-Shipping.so"
-	}
-}

@@ -1,8 +1,0 @@
-{
-	"BuildId": "264901",
-	"Modules": 
-	{
-		"GeometryCollectionNodes": "libUnrealServer-GeometryCollectionNodes-Linux-Shipping.so",
-		"GeometryCollectionTracks": "libUnrealServer-GeometryCollectionTracks-Linux-Shipping.so"
-	}
-}

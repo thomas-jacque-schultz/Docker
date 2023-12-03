@@ -1,8 +1,0 @@
-{
-	"BuildId": "264901",
-	"Modules": 
-	{
-		"GeometryCache": "libUnrealServer-GeometryCache-Linux-Shipping.so",
-		"GeometryCacheTracks": "libUnrealServer-GeometryCacheTracks-Linux-Shipping.so"
-	}
-}

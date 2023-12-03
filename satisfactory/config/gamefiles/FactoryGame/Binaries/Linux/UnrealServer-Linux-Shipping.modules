@@ -1,8 +1,0 @@
-{
-	"BuildId": "264901",
-	"Modules": 
-	{
-		"FactoryGame": "libUnrealServer-FactoryGame-Linux-Shipping.so",
-		"FactoryPreEarlyLoadingScreen": "libUnrealServer-FactoryPreEarlyLoadingScreen-Linux-Shipping.so"
-	}
-}

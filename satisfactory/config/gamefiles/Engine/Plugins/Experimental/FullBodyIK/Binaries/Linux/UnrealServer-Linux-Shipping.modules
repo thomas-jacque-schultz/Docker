@@ -1,8 +1,0 @@
-{
-	"BuildId": "264901",
-	"Modules": 
-	{
-		"FullBodyIK": "libUnrealServer-FullBodyIK-Linux-Shipping.so",
-		"PBIK": "libUnrealServer-PBIK-Linux-Shipping.so"
-	}
-}

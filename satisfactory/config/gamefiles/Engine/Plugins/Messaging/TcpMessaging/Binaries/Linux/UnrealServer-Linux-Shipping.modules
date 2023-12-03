@@ -1,7 +1,0 @@
-{
-	"BuildId": "264901",
-	"Modules": 
-	{
-		"TcpMessaging": "libUnrealServer-TcpMessaging-Linux-Shipping.so"
-	}
-}
