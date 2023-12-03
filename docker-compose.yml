@@ -61,16 +61,16 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
-  back:
-    container_name: schub_back
-    build: ./../Back
-    ports:
-      - "8090:8090"
-    restart: on-failure
-    volumes:
-      - .m2:/root/.m2
-    stdin_open: true
-    tty: true
+#  back:
+#    container_name: schub_back
+#    build: ./../Back
+#    ports:
+#      - "8090:8090"
+#    restart: on-failure
+#    volumes:
+#      - .m2:/root/.m2
+#    stdin_open: true
+#    tty: true
 
   front:
     container_name: schub_front
