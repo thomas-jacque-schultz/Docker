@@ -19,3 +19,4 @@ buildNumber.properties
 
 # ingnore env file
 .env
+*.env
