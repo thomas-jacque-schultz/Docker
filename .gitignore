@@ -16,6 +16,6 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 .idea/
-./minecraft/
-./satisfactory/
-./assetto/
+
+# ingnore env file
+.env

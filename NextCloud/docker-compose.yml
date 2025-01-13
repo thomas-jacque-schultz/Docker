@@ -1,0 +1,65 @@
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-size: "1m"
+    max-file: "1"
+    tag: "{{.Name}}"
+
+x-common-labels: &default-labels
+  logging: "promtail"
+  logging_jobname: "containerlogs"
+  stackname: "docker-monitoring-stack-gpnc"
+
+
+services:
+  nextcloud:
+    image: nextcloud
+    container_name: ${NEXTCLOUD_CONTAINER_NAME}
+    volumes:
+      - /home/data/hdd_save/NextCloud:/var/www/html
+    ports:
+      - "8080:80"
+    environment:
+      - MYSQL_HOST=nextcloud_db
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=nextcloudpass
+    depends_on:
+      - nextcloud_db
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  nextcloud_db:
+    image: mariadb
+    container_name: ${NEXTCLOUD_DB_CONTAINER_NAME}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${NEXTCLOUD_DATA_PATH}:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=strongpassword
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=nextcloudpass
+    labels:
+      <<: *default-labels
+    logging: *default-logging
+
+  collabora:
+    image: collabora/code
+    container_name: ${COLLABORA_CONTAINER_NAME}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${NEXTCLOUD_COLLABORA_PATH}:/var/lib/mysql
+    ports:
+      - "9980:9980"
+    cap_add:
+      - MKNOD
+    environment:
+      - domain=${COLLABORA_DOMAIN}
+      - extra_params=--o:ssl.enable=false
+      - username=admin
+      - password=password
+    restart: always
+    labels:
+      <<: *default-labels
+    logging: *default-logging
