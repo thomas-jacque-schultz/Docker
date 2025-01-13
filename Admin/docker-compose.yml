@@ -1,40 +1,36 @@
-version: "3.9"
+#Principale Network Configuration
 
 networks:
   default:
     name: schub_network
-    external: true
+    external: true  
     ipam:
       config:
         - subnet: 172.20.0.0/16
 
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+
+#Container Configuration
+
 services:
+
   admin-portainer:
     container_name: ${PORTAINER_CONTAINER_NAME}
     image: portainer/portainer-ce:latest
-    env_file:
-      - ../.env
-    command: -H unix:///var/run/docker.sock
     ports:
       - ${PORTAINER_EXTERNAL_PORT}:${PORTAINER_INTERNAL_PORT}
     volumes:
       - data:/data
       - ${PORTAINER_DOCKER_SOCKET}:${PORTAINER_DOCKER_SOCKET}
-    restart: always
     environment:
       - VIRTUAL_HOST=${PORTAINER_VIRTUAL_HOST}
       - VIRTUAL_PORT=${PORTAINER_VIRTUAL_PORT}
-
-  admin-nginx:
-    container_name: ${NGINX_CONTAINER_NAME}
-    image: nginx:latest
+    command: -H unix:///var/run/docker.sock
+    logging: *default-logging
     restart: always
-    ports:
-      - ${HTTP_PORT}:${HTTP_PORT}
-      - ${NGINX_PORT}:${NGINX_PORT}
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${NGINX_SAVE_PATH}/www:/var/www
-      - ${ROOT_PROJECT_DATA_DIR}/${NGINX_SAVE_PATH}/nginx.conf:/etc/nginx/conf.d:ro
-      - ${ROOT_PROJECT_DATA_DIR}/${NGINX_SAVE_PATH}/ssl:/etc/nginx/ssl:ro
-      - ${ROOT_PROJECT_DATA_DIR}/${NGINX_SAVE_PATH}/snippets:/etc/nginx/snippets:ro
-      - ${ROOT_PROJECT_DATA_DIR}/${NGINX_SAVE_PATH}/protect:/etc/nginx/protect:ro*

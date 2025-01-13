@@ -1,106 +1,77 @@
+#Principale Network Configuration
+
 networks:
   default:
     name: schub_network
-    external: true
+    external: true  
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+
+#Container Configuration
 
 services:
 
   gaming-palworld:
-    logging:
-      driver: "json-file"
-      options:
-        tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
     container_name: ${PALWORLD_CONTAINER_NAME}
     image: thijsvanloef/palworld-server-docker:latest
-    restart: unless-stopped
-    stop_grace_period: 30s # Set to however long you are willing to wait for the container to gracefully stop
-    deploy:
-      resources:
-        limits:
-          memory: 12G
     ports:
       - ${EXTERNAL_PALWORLD_PORT}:${INTERNAL_PALWORLD_UDP_PORT}
       - ${EXTERNAL_PALWORLD_RECON_PORT}:${INTERNAL_PALWORLD_RECON_UDP_PORT}
     volumes:
       - ${ROOT_PROJECT_DATA_DIR}/${PALWORLD_SAVE_PATH}:/palworld/
+    stop_grace_period: 30s # Set to however long you are willing to wait for the container to gracefully stop
+    deploy:
+      resources:
+        limits:
+          memory: 12G
     env_file:
       - ./palworld.env
+    logging: *default-logging
+    restart: unless-stopped
+
 
   gaming-minecraft-ftb:
     container_name: ${MINECRAFT_REVELATION_CONTAINER_NAME}
     image: itzg/minecraft-server:java8-multiarch
     ports:
       - ${MINECRAFT_REVELATION_PORT_EXTERNAL}:${MINECRAFT_REVELATION_PORT_INTERNAL}
-    deploy:
-      resources:
-        limits:
-          memory: 4096M
     volumes:
       - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_REVELATION_SAVE_PATH}:/data
-    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4096M
     env_file:
       - ./ftb.env
-
-  gaming-minecraft-stacia:
-    container_name: ${MINECRAFT_STACIA_CONTAINER_NAME}
-    image: itzg/minecraft-server
-    ports:
-      - ${MINECRAFT_STACIA_PORT_EXTERNAL}:${MINECRAFT_STACIA_PORT_INTERNAL}
-    deploy:
-      resources:
-        limits:
-          memory: 4096M
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_STACIA_SAVE_PATH}:/data
-      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_STACIA_SAVE_PATH}/manifests:/manifests:ro
+    logging: *default-logging
     restart: unless-stopped
-    environment:
-      EULA: true
-      TYPE: FORGE
-      FORGE_VERSION: "43.4.2"
-      MOD_PLATFORM: AUTO_CURSEFORGE
-      # allocate from https://console.curseforge.com/ and set in .env file
-      CF_API_KEY: ${CF_API_KEY}
-      #CF_MODPACK_MANIFEST: /manifests/manifest.json
-      CF_PAGE_URL: https://www.curseforge.com/minecraft/modpacks/stacia-2-expert/files/5652355
-      #CF_SLUG: "custom"
-      MEMORY: 8G
-
-
-  gaming-minecraft-stacia2.1:
-    container_name: ${MINECRAFT_STACIA_2_1_CONTAINER_NAME}
-    image: itzg/minecraft-server
-    ports:
-      - ${MINECRAFT_STACIA_PORT_EXTERNAL}:${MINECRAFT_STACIA_PORT_INTERNAL}
-    deploy:
-      resources:
-        limits:
-          memory: 4096M
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_STACIA_2_1_SAVE_PATH}:/data
-    restart: unless-stopped
-    environment:
-      EULA: true
-      MOD_PLATFORM: CURSEFORGE
-      CF_SERVER_MOD: "Stacia 2 Expert ServerPack 1.0.7.zip"
-      MEMORY: 8G
 
   gaming-minecraft-miam:
     container_name: ${MINECRAFT_PAPER_CONTAINER_NAME}
     image: itzg/minecraft-server
     ports:
       - ${MINECRAFT_PAPER_PORT_EXTERNAL}:${MINECRAFT_PAPER_PORT_INTERNAL}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_PAPER_SAVE_PATH}:/data
     deploy:
       resources:
         limits:
           memory: 4096M
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_PAPER_SAVE_PATH}:/data
-    restart: unless-stopped
     stdin_open: true
     tty: true
     env_file:
       - ./miam.env
+    logging: *default-logging
+    restart: unless-stopped
 
   server-manager:
     container_name: ${ASSETTO_CONTAINER_NAME}
@@ -113,15 +84,11 @@ services:
     volumes:
       - ${ROOT_PROJECT_DATA_DIR}/${ASSETTO_SAVE_PATH}/server-install:/home/assetto/server-manager/assetto
       - ${ROOT_PROJECT_DATA_DIR}/${ASSETTO_SAVE_PATH}/config.yml:/home/assetto/server-manager/config.yml
+    logging: *default-logging
     restart: unless-stopped
 
   satisfactory-server:
     container_name: ${SATISFACTORY_CONTAINER_NAME}
-    hostname: ${SATISFACTORY_HOSTNAME}
-    logging:
-      driver: "json-file"
-      options:
-        tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
     image: 'wolveix/satisfactory-server:latest'
     ports:
       - ${EXTERNAL_SATISFACTORY_GAME_PORT}:${INTERNAL_SATISFACTORY_GAME_PORT}
@@ -129,12 +96,14 @@ services:
       - ${EXTERNAL_SATISFACTORY_QUERY_PORT}:${INTERNAL_SATISFACTORY_QUERY_PORT}
     volumes:
       -  ${ROOT_PROJECT_DATA_DIR}/${SATISFACTORY_SAVE_PATH}:/config
+    hostname: ${SATISFACTORY_HOSTNAME}
     deploy:
       resources:
         limits:
           memory: 16G
         reservations:
           memory: 10G
-    restart: unless-stopped
     env_file:
       - ./satisfactory.env
+    logging: *default-logging
+    restart: unless-stopped

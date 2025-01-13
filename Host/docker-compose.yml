@@ -1,40 +1,53 @@
-version: "3.9"
+#Principale Network Configuration
 
 networks:
   default:
     name: schub_network
-    external: true
-  private:
-    name: schub_private_network
-    driver: bridge
+    external: true  
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+
+#Container Configuration
 
 services:
+
   host-plex:
     container_name: ${PLEX_CONTAINER_NAME}
     image: lscr.io/linuxserver/plex:latest
+    network_mode: host
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${PLEX_CONFIG_SAVE_PATH}:/config
+      - ${ROOT_PROJECT_DATA_DIR}/${PLEX_TV_SAVE_PATH}:/tv
+      - ${PLEX_MOVIE_SAVE_PATH}:/movies
     env_file:
       - ../.env
-    network_mode: host
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_CLAIM}
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${PLEX_CONFIG_SAVE_PATH}:/config
-      - ${ROOT_PROJECT_DATA_DIR}/${PLEX_TV_SAVE_PATH}:/tv
-      - ${PLEX_MOVIE_SAVE_PATH}:/movies
+    logging: *default-logging
     restart: unless-stopped
 
   host-front:
     container_name: ${FRONT_CONTAINER_NAME}
+    ports:
+      - ${FRONT_EXTERNAL_PORT}:${FRONT_INTERNAL_PORT}
     env_file:
       - ../.env
     build: ${FRONT_BUILD_PATH}
     hostname: front
-    ports:
-      - ${FRONT_EXTERNAL_PORT}:${FRONT_INTERNAL_PORT}
     stdin_open: true
     tty: true
+    logging: *default-logging
     restart: unless-stopped
