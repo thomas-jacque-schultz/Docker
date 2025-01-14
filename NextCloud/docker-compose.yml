@@ -24,10 +24,10 @@ services:
     volumes:
       - /home/data/hdd_save/NextCloud:/var/www/html
     environment:
-      - MYSQL_HOST=nextcloud_db
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=nextcloudpass
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     depends_on:
       - nextcloud_db
     logging: *default-logging
@@ -40,26 +40,9 @@ services:
     volumes:
       - ${ROOT_PROJECT_DATA_DIR}/${NEXTCLOUD_DATA_PATH}:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=strongpassword
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=nextcloudpass
-    logging: *default-logging
-    restart: always
-
-  collabora:
-    container_name: ${COLLABORA_CONTAINER_NAME}
-    image: collabora/code
-    ports:
-      - "9980:9980"
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${NEXTCLOUD_COLLABORA_PATH}:/var/lib/mysql
-    cap_add:
-      - MKNOD
-    environment:
-      - domain=${COLLABORA_DOMAIN}
-      - extra_params=--o:ssl.enable=false
-      - username=admin
-      - password=password
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     logging: *default-logging
     restart: always

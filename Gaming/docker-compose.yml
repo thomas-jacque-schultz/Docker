@@ -46,6 +46,7 @@ services:
       - ${EXTERNAL_ASSETTO_HTTP_PORT}:${INTERNAL_ASSETTO_HTTP_PORT}
       - ${EXTERNAL_ASSETTO_GAME_PORT}:${INTERNAL_ASSETTO_GAME_PORT}
       - ${EXTERNAL_ASSETTO_GAME_PORT}:${INTERNAL_ASSETTO_GAME_PORT_UDP}
+      - ${EXTERNAL_ASSETTO_WRAPPER_PORT}:${INTERNAL_ASSETTO_WRAPPER_PORT}
     volumes:
       - ${ROOT_PROJECT_DATA_DIR}/${ASSETTO_SAVE_PATH}/server-install:/home/assetto/server-manager/assetto
       - ${ROOT_PROJECT_DATA_DIR}/${ASSETTO_SAVE_PATH}/config.yml:/home/assetto/server-manager/config.yml
