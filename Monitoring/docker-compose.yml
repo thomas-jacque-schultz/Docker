@@ -27,6 +27,16 @@ services:
     logging: *default-logging
     restart: unless-stopped
 
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    restart: unless-stopped
+
   grafana:
     container_name: grafana
     image: grafana/grafana:latest

@@ -38,41 +38,6 @@ services:
     logging: *default-logging
     restart: unless-stopped
 
-
-  gaming-minecraft-ftb:
-    container_name: ${MINECRAFT_REVELATION_CONTAINER_NAME}
-    image: itzg/minecraft-server:java8-multiarch
-    ports:
-      - ${MINECRAFT_REVELATION_PORT_EXTERNAL}:${MINECRAFT_REVELATION_PORT_INTERNAL}
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_REVELATION_SAVE_PATH}:/data
-    deploy:
-      resources:
-        limits:
-          memory: 4096M
-    env_file:
-      - ./ftb.env
-    logging: *default-logging
-    restart: unless-stopped
-
-  gaming-minecraft-miam:
-    container_name: ${MINECRAFT_PAPER_CONTAINER_NAME}
-    image: itzg/minecraft-server
-    ports:
-      - ${MINECRAFT_PAPER_PORT_EXTERNAL}:${MINECRAFT_PAPER_PORT_INTERNAL}
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_PAPER_SAVE_PATH}:/data
-    deploy:
-      resources:
-        limits:
-          memory: 4096M
-    stdin_open: true
-    tty: true
-    env_file:
-      - ./miam.env
-    logging: *default-logging
-    restart: unless-stopped
-
   server-manager:
     container_name: ${ASSETTO_CONTAINER_NAME}
     image: seejy/assetto-server-manager:latest
