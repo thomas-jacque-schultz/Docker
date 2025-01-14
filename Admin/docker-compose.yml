@@ -26,7 +26,7 @@ services:
     ports:
       - ${PORTAINER_EXTERNAL_PORT}:${PORTAINER_INTERNAL_PORT}
     volumes:
-      - data:/data
+      - ${ROOT_PROJECT_DATA_DIR}/${PORTAINER_SAVE_PATH}:/data
       - ${PORTAINER_DOCKER_SOCKET}:${PORTAINER_DOCKER_SOCKET}
     environment:
       - VIRTUAL_HOST=${PORTAINER_VIRTUAL_HOST}
