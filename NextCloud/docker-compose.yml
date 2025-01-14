@@ -11,7 +11,7 @@ x-logging:
   &default-logging
   driver: "json-file"
   options:
-    tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+    tag: "{{.Name}}"
 
 #Container Configuration
 
