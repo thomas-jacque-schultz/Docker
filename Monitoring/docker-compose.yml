@@ -3,7 +3,7 @@
 networks:
   default:
     name: Monitoring
-    external: true  
+    driver: bridge
 
 #Log Configuration
 
