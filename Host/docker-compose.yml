@@ -20,34 +20,42 @@ x-logging:
 
 services:
 
-  host-plex:
-    container_name: ${PLEX_CONTAINER_NAME}
-    image: lscr.io/linuxserver/plex:latest
-    network_mode: host
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${PLEX_CONFIG_SAVE_PATH}:/config
-      - ${ROOT_PROJECT_DATA_DIR}/${PLEX_TV_SAVE_PATH}:/tv
-      - ${PLEX_MOVIE_SAVE_PATH}:/movies
-    env_file:
-      - ../.env
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-      - VERSION=docker
-      - PLEX_CLAIM=${PLEX_CLAIM}
-    logging: *default-logging
-    restart: unless-stopped
+#  host-plex:
+#    container_name: ${PLEX_CONTAINER_NAME}
+#    image: lscr.io/linuxserver/plex:latest
+#    network_mode: host
+#    volumes:
+#      - ${ROOT_PROJECT_DATA_DIR}/${PLEX_CONFIG_SAVE_PATH}:/config
+#      - ${ROOT_PROJECT_DATA_DIR}/${PLEX_TV_SAVE_PATH}:/tv
+#      - ${PLEX_MOVIE_SAVE_PATH}:/movies
+#    env_file:
+#      - ../.env
+#    environment:
+#      - PUID=1000
+#      - PGID=1000
+#      - TZ=Etc/UTC
+#      - VERSION=docker
+#      - PLEX_CLAIM=${PLEX_CLAIM}
+#    logging: *default-logging
+#    restart: unless-stopped
+#
+#  host-front:
+#    container_name: ${FRONT_CONTAINER_NAME}
+#    ports:
+#      - ${FRONT_EXTERNAL_PORT}:${FRONT_INTERNAL_PORT}
+#    env_file:
+#      - ../.env
+#    build: ${FRONT_BUILD_PATH}
+#    hostname: front
+#    stdin_open: true
+#    tty: true
+#    logging: *default-logging
+#    restart: unless-stopped
 
-  host-front:
-    container_name: ${FRONT_CONTAINER_NAME}
-    ports:
-      - ${FRONT_EXTERNAL_PORT}:${FRONT_INTERNAL_PORT}
-    env_file:
-      - ../.env
-    build: ${FRONT_BUILD_PATH}
-    hostname: front
-    stdin_open: true
-    tty: true
+  host-bot:
+    build: 
+        context: ./../../Bot
+        dockerfile: Dockerfile
+    container_name: ${DISCORD_BOT_CONTAINER_NAME}
     logging: *default-logging
-    restart: unless-stopped
+    restart: always

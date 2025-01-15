@@ -59,7 +59,6 @@ services:
     image: itzg/minecraft-server
     ports:
       - ${MINECRAFT_LYCEE_PORT_EXTERNAL}:${MINECRAFT_LYCEE_PORT_INTERNAL}
-      - ${MINECRAFT_LYCEE_RCON_EXTERNAL}:${MINECRAFT_LYCEE_RCON_INTERNAL}
     volumes:
      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_LYCEE_SAVE_PATH}:/data 
     environment:
@@ -68,7 +67,7 @@ services:
       RCON_PASSWORD: ${MINECRAFT_LYCEE_PASSWORD}
       RCON_PORT: ${MINECRAFT_LYCEE_RCON_INTERNAL}
       TYPE: "paper"
-    restart: always
+    restart: always 
 
   crafty:
     container_name: ${MINECRAFT_GUI_CONTAINER_NAME}
