@@ -57,5 +57,7 @@ services:
         context: ./../../Bot
         dockerfile: Dockerfile
     container_name: ${DISCORD_BOT_CONTAINER_NAME}
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}    
     logging: *default-logging
     restart: always
