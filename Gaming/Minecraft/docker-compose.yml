@@ -69,16 +69,16 @@ services:
       TYPE: "paper"
     restart: always 
 
-  crafty:
-    container_name: ${MINECRAFT_GUI_CONTAINER_NAME}
-    image: craftycontrol/crafty
-    ports:
-      - ${MINECRAFT_GUI_PORT_EXTERNAL}:${MINECRAFT_GUI_PORT_INTERNAL} 
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_GUI_SAVE_PATH}:/crafty-data
-    environment:
-      CRAFTY_ADMIN: ${CRAFTY_ADMIN}
-      CRAFTY_ADMIN_PASS: ${CRAFTY_ADMIN_PASS}
-    logging: *default-logging
-    restart: always
+  #crafty:
+  #  container_name: ${MINECRAFT_GUI_CONTAINER_NAME}
+  #  image: craftycontrol/crafty
+  #  ports:
+  #    - ${MINECRAFT_GUI_PORT_EXTERNAL}:${MINECRAFT_GUI_PORT_INTERNAL}
+  #  volumes:
+  #    - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_GUI_SAVE_PATH}:/crafty-data
+  #  environment:
+  #    CRAFTY_ADMIN: ${CRAFTY_ADMIN}
+  #    CRAFTY_ADMIN_PASS: ${CRAFTY_ADMIN_PASS}
+  #  logging: *default-logging
+  #  restart: always
 
