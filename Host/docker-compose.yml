@@ -81,12 +81,19 @@ services:
       - ${SONARQUBE_EXTERNAL_PORT}:${SONARQUBE_INTERNAL_PORT}
     volumes:
       - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}:/opt/sonarqube
+      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/data:/opt/sonarqube/data
+      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/extensions:/opt/sonarqube/extensions
+      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/logs:/opt/sonarqube/logs
+      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/conf:/opt/sonarqube/conf
+      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/temp:/opt/sonarqube/temp
     environment:
       - SONARQUBE_JDBC_URL=jdbc:postgresql://host-sonarqube-db:5432/sonar
       - SONARQUBE_JDBC_USERNAME=${SONARQUBE_JDBC_USERNAME}
       - SONARQUBE_JDBC_PASSWORD=${SONARQUBE_JDBC_PASSWORD}
     logging: *default-logging
     restart: unless-stopped
+    depends_on:
+      - host-sonarqube-db
 
   host-sonarqube-db:
     container_name: ${SONARQUBE_DB_CONTAINER_NAME}
