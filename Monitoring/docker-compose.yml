@@ -17,8 +17,8 @@ x-logging:
 
 services:
 
-  prometheus:
-    container_name: prometheus
+  monitoring-prometheus:
+    container_name: monitoring-prometheus
     image: prom/prometheus:latest
     volumes:
       - ${ROOT_PROJECT_DATA_DIR}/${PROMETHEUS_PATH}/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -27,8 +27,8 @@ services:
     logging: *default-logging
     restart: unless-stopped
 
-  cadvisor:
-    container_name: cadvisor
+  monitoring-cadvisor:
+    container_name: monitoring-cadvisor
     image: gcr.io/cadvisor/cadvisor:latest
     volumes:
       - /:/rootfs:ro
@@ -37,8 +37,8 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     restart: unless-stopped
 
-  grafana:
-    container_name: grafana
+  monitoring-grafana:
+    container_name: monitoring-grafana
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
@@ -50,8 +50,8 @@ services:
     logging: *default-logging
     restart: unless-stopped
 
-  loki:
-    container_name: loki
+  monitoring-loki:
+    container_name: monitoring-loki
     image: grafana/loki:2.9.0
     ports:
       - "3100:3100"
@@ -61,8 +61,8 @@ services:
     logging: *default-logging
     restart: unless-stopped
 
-  promtail:
-    container_name: ${PROMTAIL_CONTAINER_NAME}
+  monitoring-promtail:
+    container_name: monitoring-promtail
     image: grafana/promtail:2.9.0
     volumes:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
@@ -72,8 +72,8 @@ services:
     logging: *default-logging
     restart: unless-stopped
 
-  node-exporter:
-    container_name: node-exporter
+  monitoring-node-exporter:
+    container_name: monitoring-node-exporter
     image: prom/node-exporter:latest
     volumes:
       - /proc:/host/proc:ro

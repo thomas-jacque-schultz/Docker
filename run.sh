@@ -11,10 +11,10 @@ function run_docker_compose {
   local dir=$1
   for COMPOSE_FILE in "$dir"/*/docker-compose.yml; do
     if [ -f "$COMPOSE_FILE" ]; then
-      echo "Lancement de Docker Compose dans : $(dirname "$COMPOSE_FILE")"
-      pushd "$(dirname "$COMPOSE_FILE")" > /dev/null
+      echo "Lancement de la stack : $(dirname "$COMPOSE_FILE")"
+      pushd "$(dirname "$COMPOSE_FILE")" > /dev/null || exit
       docker compose up -d
-      popd > /dev/null
+      popd > /dev/null || exit
     else
       echo "Aucun fichier docker-compose.yml trouvé dans $dir."
     fi
