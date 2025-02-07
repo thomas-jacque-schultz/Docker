@@ -86,6 +86,7 @@ services:
       - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/logs:/opt/sonarqube/logs
       - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/conf:/opt/sonarqube/conf
       - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/temp:/opt/sonarqube/temp
+      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/docker:/opt/sonarqube/docker
     environment:
       - SONARQUBE_JDBC_URL=jdbc:postgresql://host-sonarqube-db:5432/sonar
       - SONARQUBE_JDBC_USERNAME=${SONARQUBE_JDBC_USERNAME}
