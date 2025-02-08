@@ -3,7 +3,6 @@
 networks:
   default:
     name: schub_network
-    external: true  
     ipam:
       config:
         - subnet: 172.20.0.0/16
