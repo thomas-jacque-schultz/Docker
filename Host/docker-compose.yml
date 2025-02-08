@@ -74,33 +74,47 @@ services:
     logging: *default-logging
     restart: unless-stopped
 
-  host-sonarqube:
-    container_name: ${SONARQUBE_CONTAINER_NAME}
+  sonarqube:
     image: sonarqube:community
-    ports:
-      - ${SONARQUBE_EXTERNAL_PORT}:${SONARQUBE_INTERNAL_PORT}
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/data:/opt/sonarqube/data
-      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/extensions:/opt/sonarqube/extensions
-      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/logs:/opt/sonarqube/logs
-      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_PATH}/temp:/opt/sonarqube/temp
-    environment:
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://host-sonarqube-db:5432/sonar
-      - SONARQUBE_JDBC_USERNAME=${SONARQUBE_JDBC_USERNAME}
-      - SONARQUBE_JDBC_PASSWORD=${SONARQUBE_JDBC_PASSWORD}
-    logging: *default-logging
-    restart: unless-stopped
+    hostname: sonarqube
+    container_name: sonarqube
+    read_only: true
     depends_on:
-      - host-sonarqube-db
-
-  host-sonarqube-db:
-    container_name: ${SONARQUBE_DB_CONTAINER_NAME}
-    image: postgres:15
-    volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${SONARQUBE_DB_PATH}:/var/lib/postgresql/data
+      db:
+        condition: service_healthy
     environment:
-      - POSTGRES_USER=${SONARQUBE_JDBC_USERNAME}
-      - POSTGRES_PASSWORD=${SONARQUBE_JDBC_PASSWORD}
-      - POSTGRES_DB=sonar
-    logging: *default-logging
-    restart: unless-stopped
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_temp:/opt/sonarqube/temp
+    ports:
+      - "9000:9000"
+
+  db:
+    image: postgres:15
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    hostname: postgresql
+    container_name: postgresql
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+
+volumes:
+  sonarqube_data:
+  sonarqube_temp:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
