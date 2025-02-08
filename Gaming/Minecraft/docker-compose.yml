@@ -69,6 +69,22 @@ services:
       TYPE: "paper"
     restart: always 
 
+
+  gaming-minecraft-stacia:
+    container_name: ${MINECRAFT_STACIA_CONTAINER_NAME}
+    image: itzg/minecraft-server
+    ports:
+      - ${MINECRAFT_STACIA_EXTERNAL_PORT}:${MINECRAFT_STACIA_INTERNAL_PORT}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_STACIA_SAVE_PATH}:/data
+    environment:
+      EULA: "TRUE"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: ${MINECRAFT_STACIA_PASSWORD}
+      RCON_PORT: ${MINECRAFT_STACIA_RCON_INTERNAL}
+    logging: *default-logging
+    restart: unless-stopped
+
   #crafty:
   #  container_name: ${MINECRAFT_GUI_CONTAINER_NAME}
   #  image: craftycontrol/crafty
