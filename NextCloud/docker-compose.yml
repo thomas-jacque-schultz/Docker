@@ -22,17 +22,19 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - /home/data/hdd_save/NextCloud:/var/www/html
+      - /home/data/hdd_save/NextCloud_Schub:/var/www/html
     environment:
       - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    depends_on:
+      - OVERWRITECLIURL=${URL_IN_DNS}
+      - OVERWRITEPROTOCOL=https
+      - TRUSTED_PROXIES=["*"]
+    depends_on: 
       - nextcloud_db
-    logging: *default-logging
+    logging: *default-logging 
     restart: always
-
 
   nextcloud_db:
     container_name: ${NEXTCLOUD_DB_CONTAINER_NAME}
