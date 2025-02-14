@@ -85,20 +85,11 @@ services:
       MOD_PLATFORM: AUTO_CURSEFORGE
       CF_SLUG: stacia-2-expert
       CF_API_KEY: ${CF_API_KEY}
-      MEMORY: 6G
+      MEMORY: 4096M
+    deploy:
+      resources:
+        limits:
+          memory: 4096M
     logging: *default-logging
-   # restart: unless-stopped
-
-  #crafty:
-  #  container_name: ${MINECRAFT_GUI_CONTAINER_NAME}
-  #  image: craftycontrol/crafty
-  #  ports:
-  #    - ${MINECRAFT_GUI_PORT_EXTERNAL}:${MINECRAFT_GUI_PORT_INTERNAL}
-  #  volumes:
-  #    - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_GUI_SAVE_PATH}:/crafty-data
-  #  environment:
-  #    CRAFTY_ADMIN: ${CRAFTY_ADMIN}
-  #    CRAFTY_ADMIN_PASS: ${CRAFTY_ADMIN_PASS}
-  #  logging: *default-logging
-  #  restart: always
+    restart: unless-stopped
 
