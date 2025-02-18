@@ -72,3 +72,19 @@ services:
       - ./satisfactory.env
     logging: *default-logging
     restart: unless-stopped
+
+  return-moria:
+    container_name: {MORIA_CONTAINER_NAME}
+    image: ghcr.io/bubylou/moria:latest
+    environment:
+      - UPDATE_ON_START=true
+      - RESET_SEED=false
+      - LISTEN_PORT= {MORIA_PORT}
+    ports:
+      - {MORIA_PORT}:{MORIA_PORT}/udp
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/{MORIA_SAVE_PATH}/app:/app/moria # dedicated server files
+      - ${ROOT_PROJECT_DATA_DIR}/{MORIA_SAVE_PATH}/moria-config:/config/moria # moria config files
+      - ${ROOT_PROJECT_DATA_DIR}/{MORIA_SAVE_PATH}/moria-data:/data/moria # game/world save
+    logging: *default-logging
+    restart: unless-stopped
