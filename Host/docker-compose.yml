@@ -3,7 +3,6 @@
 networks:
   default:
     name: schub_network
-    external: true  
     ipam:
       config:
         - subnet: 172.20.0.0/16
@@ -55,9 +54,8 @@ services:
   host-bot:
     container_name: ${DISCORD_BOT_CONTAINER_NAME}
     image: thomasschultzschub/discord-bot:latest
-    environment:
-      - DISCORD_TOKEN=${DISCORD_TOKEN}
-      - MONGODB_PATH=${MONGODB_PATH}
+    env_file:
+      - bot.env
     logging: *default-logging
     depends_on:
       - host-mongo
