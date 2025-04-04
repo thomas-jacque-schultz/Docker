@@ -93,3 +93,26 @@ services:
     logging: *default-logging
     restart: unless-stopped
 
+  gaming-minecraft-holycube:
+    container_name: ${MINECRAFT_HOLYCUBE_CONTAINER_NAME}
+    image: itzg/minecraft-server
+    ports:
+      - ${MINECRAFT_HOLYCUBE_EXTERNAL_PORT}:${MINECRAFT_HOLYCUBE_INTERNAL_PORT}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_HOLYCUBE_SAVE_PATH}:/data
+    environment:
+      EULA: "TRUE"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: ${MINECRAFT_HOLYCUBE_PASSWORD}
+      RCON_PORT: ${MINECRAFT_HOLYCUBE_RCON_INTERNAL}
+      MOD_PLATFORM: AUTO_CURSEFORGE
+      CF_SLUG: holycube-revolution
+      CF_API_KEY: ${CF_API_KEY}
+      MEMORY: 6G
+    deploy:
+      resources:
+        limits:
+          memory: 5G
+    logging: *default-logging
+    restart: unless-stopped
+
