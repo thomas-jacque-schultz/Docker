@@ -1,0 +1,83 @@
+# Principale Network Configuration
+
+networks:
+  default:
+    name: schub_network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+
+services:
+
+  home-assistant-mqtt:
+    container_name: ${MQTT_CONTAINER_NAME}
+    image: eclipse-mosquitto:latest
+    networks:
+      - default
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MQTT_CONFIG_PATH}:/mosquitto/config
+      - ${ROOT_PROJECT_DATA_DIR}/${MQTT_DATA_PATH}:/mosquitto/data
+      - ${ROOT_PROJECT_DATA_DIR}/${MQTT_LOG_PATH}:/mosquitto/log
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    env_file:
+      - ../.env
+    logging: *default-logging
+    restart: unless-stopped
+
+  home-assistant-core:
+    container_name: ${HOMEASSISTANT_CONTAINER_NAME}
+    image: homeassistant/home-assistant:latest
+    networks:
+      - default
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${HA_CONFIG_PATH}:/config
+    environment:
+      - TZ=Etc/UTC
+    ports:
+      - "8123:8123"
+    depends_on:
+      - home-assistant-mqtt
+    logging: *default-logging
+    restart: unless-stopped
+
+  home-assistant-node-red:
+    container_name: ${NODERED_CONTAINER_NAME}
+    image: nodered/node-red:latest
+    networks:
+      - default
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${NODERED_DATA_PATH}:/data
+    ports:
+      - "1880:1880"
+    env_file:
+      - ../.env
+    logging: *default-logging
+    restart: unless-stopped
+
+  home-assistant-matter:
+    container_name: ${MATTER_SERVER_CONTAINER_NAME}
+    image: ghcr.io/home-assistant-libs/python-matter-server:stable
+    networks:
+      - default
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MATTER_CONFIG_PATH}:/data
+    environment:
+      - TZ=Etc/UTC
+    ports:
+      - "5580:5580"
+    depends_on:
+      - home-assistant-core
+    logging: *default-logging
+    restart: unless-stopped
