@@ -105,14 +105,22 @@ services:
       ENABLE_RCON: "true"
       RCON_PASSWORD: ${MINECRAFT_HOLYCUBE_PASSWORD}
       RCON_PORT: ${MINECRAFT_HOLYCUBE_RCON_INTERNAL}
-      MOD_PLATFORM: AUTO_CURSEFORGE
+      TYPE: NEOFORGE
+      VERSION: "1.21.1"
       CF_SLUG: holycube-revolution
+      CF_FILENAME_MATCHER: 1.0.5
+      MOD_PLATFORM: AUTO_CURSEFORGE
       CF_API_KEY: ${CF_API_KEY}
+      CURSEFORGE_FILES: |
+        minecolonies
+        structurize
+        multi-piston
+        blockui
+        domum-ornamentum
       MEMORY: 6G
     deploy:
       resources:
         limits:
-          memory: 5G
+          memory: 8G
     logging: *default-logging
     restart: unless-stopped
-

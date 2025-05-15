@@ -52,6 +52,16 @@ services:
     logging: *default-logging
     restart: unless-stopped
 
+  home-assistant-linky:
+    container_name: ${HOME_ASSISTANT_LINKY_CONTAINER_NAME}
+    image: ghcr.io/bokub/ha-linky-amd64:1.5.0
+    environment:
+      - SUPERVISOR_TOKEN=${HOME_ASSISTANT_LINKY_TOKEN}
+      - WS_URL=${HOME_ASSISTANT_URL}
+      - TZ=Europe/Paris
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${HOME_ASSISTANT_LINKY_PATH}:/data
+
   home-assistant-node-red:
     container_name: ${NODERED_CONTAINER_NAME}
     image: nodered/node-red:latest
