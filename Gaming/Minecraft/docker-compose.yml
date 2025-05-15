@@ -93,8 +93,6 @@ services:
     logging: *default-logging
     restart: unless-stopped
 
-<<<<<<< Updated upstream
-=======
   gaming-minecraft-holycube:
     container_name: ${MINECRAFT_HOLYCUBE_CONTAINER_NAME}
     image: itzg/minecraft-server
@@ -126,5 +124,3 @@ services:
           memory: 8G
     logging: *default-logging
     restart: unless-stopped
-
->>>>>>> Stashed changes
