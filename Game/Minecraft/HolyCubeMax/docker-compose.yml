@@ -1,0 +1,66 @@
+# Minecraft HolyCube Max Stack Configuration for Docker Swarm
+
+networks:
+  schub:
+    external: true
+
+# Secrets
+secrets:
+  MINECRAFT_RCON_PASSWORD:
+    external: true
+  MINECRAFT_CF_API_KEY:
+    external: true
+
+# Log Configuration
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+services:
+
+  gaming-minecraft-holycube-max:
+    image: itzg/minecraft-server:latest
+    networks:
+      - schub
+    ports:
+      - "15085:25565"
+    volumes:
+      - minecraft_holycube_max_data:/data
+    secrets:
+      - MINECRAFT_RCON_PASSWORD
+      - MINECRAFT_CF_API_KEY
+    environment:
+      EULA: "TRUE"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
+      RCON_PORT: "25575"
+      TYPE: AUTO_CURSEFORGE
+      VERSION: "1.21.1"
+      CF_SLUG: holycube-revolution
+      CF_EXCLUDE_MODS: |
+        particular-reforged
+        wakes-reforged
+        smithing-template-viewer
+      CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
+      MEMORY: "6G"
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == loki
+
+volumes:
+  minecraft_holycube_max_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Minecraft/HolyCubeMax

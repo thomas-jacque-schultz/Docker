@@ -20,9 +20,9 @@ services:
     container_name: ${NEXTCLOUD_CONTAINER_NAME}
     image: nextcloud
     ports:
-      - "8080:80"
+      - "${NEXTCLOUD_EXTERNAL_PORT}:${NEXTCLOUD_INTERNAL_PORT}"
     volumes:
-      - /home/data/hdd_save/NextCloud_Schub:/var/www/html
+      - ${ROOT_DATA_DIR}/${STACK_NAME}/${DATA_PATH}:/var/www/html
     environment:
       - MYSQL_HOST=${MYSQL_HOST}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -30,7 +30,9 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - OVERWRITECLIURL=${URL_IN_DNS}
       - OVERWRITEPROTOCOL=https
-      - TRUSTED_PROXIES=["*"]
+      - TRUSTED_PROXIES="*"
+      - PHP_UPLOAD_LIMIT=100G
+      - PHP_MEMORY_LIMIT=100G
     depends_on: 
       - nextcloud_db
     logging: *default-logging 
@@ -40,7 +42,7 @@ services:
     container_name: ${NEXTCLOUD_DB_CONTAINER_NAME}
     image: mariadb
     volumes:
-      - ${ROOT_PROJECT_DATA_DIR}/${NEXTCLOUD_DATA_PATH}:/var/lib/mysql
+      - ${ROOT_DATA_DIR}/${STACK_NAME}/${DATABASE_PATH}:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}

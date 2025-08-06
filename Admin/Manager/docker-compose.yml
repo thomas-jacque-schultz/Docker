@@ -1,0 +1,189 @@
+version: "3.8"
+
+# Principale Network Configuration
+
+networks:
+  schub:
+    name: schub
+    driver: overlay
+    external: true
+  monitoring:
+    name: monitoring
+    driver: overlay
+    external: true
+
+# Volumes
+
+volumes:
+  portainer_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Portainer/Data
+      o: bind
+  code_server_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/CodeServer/Config
+      o: bind  
+  grafana_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Grafana/Data
+      o: bind
+  loki_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Loki/Config
+      o: bind
+  prometheus_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Prometheus/Config
+      o: bind
+  cloudflare_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Cloudflared/Config
+      o: bind
+
+# Secrets
+
+secrets:
+  PORTAINER_VIRTUAL_HOST:
+    external: true
+  PORTAINER_VIRTUAL_PORT:
+    external: true
+  CODE_SERVER_PASSWORD:
+    external: true
+  GF_SECURITY_ADMIN_USER:
+    external: true
+  GF_SECURITY_ADMIN_PASSWORD:
+    external: true
+
+# Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+services:
+
+  admin-portainer:
+    image: portainer/portainer-ee:latest
+    networks:
+      - schub
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    secrets:
+      - PORTAINER_VIRTUAL_HOST
+      - PORTAINER_VIRTUAL_PORT
+    environment:
+      - VIRTUAL_HOST_FILE=/run/secrets/PORTAINER_VIRTUAL_HOST
+      - VIRTUAL_PORT_FILE=/run/secrets/PORTAINER_VIRTUAL_PORT
+    command: -H unix:///var/run/docker.sock
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  admin-code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    networks:
+      - schub
+    volumes:
+      - code_server_config:/config
+      - /home/pisel:/home/coder/project
+    secrets:
+      - CODE_SERVER_PASSWORD
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - FILE__PASSWORD=/run/secrets/CODE_SERVER_PASSWORD
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  monitoring-grafana:
+    image: grafana/grafana:latest
+    networks:
+      - monitoring
+    volumes:
+      - grafana_data:/var/lib/grafana
+    secrets:
+      - GF_SECURITY_ADMIN_USER
+      - GF_SECURITY_ADMIN_PASSWORD
+    environment:
+      - GF_SECURITY_ADMIN_USER__FILE=/run/secrets/GF_SECURITY_ADMIN_USER
+      - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/GF_SECURITY_ADMIN_PASSWORD
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any    
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  monitoring-loki:
+    image: grafana/loki:2.9.0
+    networks:
+      - monitoring
+    volumes:
+      - loki_config:/etc/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  monitoring-prometheus:
+    image: prom/prometheus:latest
+    networks:
+      - monitoring
+    volumes:
+      - prometheus_config:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared:latest
+    networks:
+      - monitoring
+      - schub
+    volumes:
+      - cloudflare_config:/etc/cloudflared
+    command: tunnel --config /etc/cloudflared/config.yml run
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
