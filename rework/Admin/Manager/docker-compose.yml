@@ -1,0 +1,194 @@
+# Principale Network Configuration
+
+networks:
+  default:
+    name: schub_network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  monitoring:
+    name: monitoring
+    driver: bridge
+
+# Volumes
+
+volumes:
+  portainer_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Portainer/Data
+      o: bind
+  code_server_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/CodeServer/Config
+      o: bind  
+  grafana_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Grafana/Data
+      o: bind
+  loki_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Loki/Config
+      o: bind
+  prometheus_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Prometheus/Config
+      o: bind
+  cloudflare_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/cloudflared/config
+      o: bind
+
+# Secrets
+
+secrets:
+  PORTAINER_VIRTUAL_HOST:
+    external: true
+  PORTAINER_VIRTUAL_PORT:
+    external: true
+  CODE_SERVER_PASSWORD:
+    external: true
+  GF_SECURITY_ADMIN_USER:
+    external: true
+  GF_SECURITY_ADMIN_PASSWORD:
+    external: true
+
+# Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+services:
+
+  admin-portainer:
+    container_name: admin-portainer
+    image: portainer/portainer-ce:latest
+    ports:
+      - 15004:9443
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    secrets:
+      - PORTAINER_VIRTUAL_HOST
+      - PORTAINER_VIRTUAL_PORT
+    environment:
+      - VIRTUAL_HOST_FILE=/run/secrets/PORTAINER_VIRTUAL_HOST
+      - VIRTUAL_PORT_FILE=/run/secrets/PORTAINER_VIRTUAL_PORT
+    command: -H unix:///var/run/docker.sock
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.dynamis == true
+
+  admin-code-server:
+    container_name: admin-code-server
+    image: lscr.io/linuxserver/code-server:latest
+    ports:
+      - 8449:8443
+    volumes:
+      - code_server_config:/config
+      - ${PROJECT_DATA_DIR}:/home/coder/project
+    secrets:
+      - CODE_SERVER_PASSWORD
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - PASSWORD=/run/secrets/CODE_SERVER_PASSWORD
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.dynamis == true
+
+  monitoring-grafana:
+    container_name: monitoring-grafana
+    image: grafana/grafana:latest
+    networks:
+      - monitoring
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    secrets:
+      - GF_SECURITY_ADMIN_USER
+      - GF_SECURITY_ADMIN_PASSWORD
+    environment:
+      - GF_SECURITY_ADMIN_USER=/run/secrets/GF_SECURITY_ADMIN_USER
+      - GF_SECURITY_ADMIN_PASSWORD=/run/secrets/GF_SECURITY_ADMIN_PASSWORD
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any    
+      placement:
+        constraints:
+          - node.labels.dynamis == true
+
+  monitoring-loki:
+    container_name: monitoring-loki
+    image: grafana/loki:2.9.0
+    networks:
+      - monitoring
+    volumes:
+      - loki_config:/etc/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.dynamis == true
+
+  monitoring-prometheus:
+    container_name: monitoring-prometheus
+    image: prom/prometheus:latest
+    networks:
+      - monitoring
+    volumes:
+      - prometheus_config:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.dynamis == true
+
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared:latest
+    networks:
+      - monitoring
+      - schub_network
+    volumes:
+      - cloudflare_config:/etc/cloudflared
+    command: tunnel --config /etc/cloudflared/config.yml run
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.dynamis == true        

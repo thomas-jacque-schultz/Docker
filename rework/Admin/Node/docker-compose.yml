@@ -1,0 +1,71 @@
+version: "3.8"
+
+networks:
+  monitoring:
+    name: monitoring
+    driver: bridge
+
+volumes:
+  promtail_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Promtail/Config
+      o: bind
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+services:
+
+  monitoring-cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    networks:
+      - monitoring
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    logging: *default-logging
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any
+
+  monitoring-promtail:
+    image: grafana/promtail:2.9.0
+    networks:
+      - monitoring
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/log:/var/log
+      - promtail_config:/etc/promtail
+    command: -config.file=/etc/promtail/docker-config.yml
+    logging: *default-logging
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any
+
+  monitoring-node-exporter:
+    image: prom/node-exporter:latest
+    networks:
+      - monitoring
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    logging: *default-logging
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any

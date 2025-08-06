@@ -1,0 +1,36 @@
+#Principale Network Configuration
+
+networks:
+  default:
+    name: schub_network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+#Container Configuration
+
+services:
+
+  
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: ${HOMEPAGE_CONTAINER_NAME}
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=homepage.schultz-thomas.fr
+    ports:
+      - ${HOMEPAGE_SERVER_EXTERNAL_PORT}:3000
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${HOMEPAGE_SERVER_CONFIG_PATH}:/app/config 
+      - ${PORTAINER_DOCKER_SOCKET}:${PORTAINER_DOCKER_SOCKET}
+    restart: unless-stopped
+    logging: *default-logging
+
+  
