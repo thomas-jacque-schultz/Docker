@@ -1,0 +1,51 @@
+version: '3'
+
+# Networks
+
+networks:
+  schub:
+    external: true
+
+#Volumes
+
+volumes:
+  vault_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/VaultWarden/Data
+
+# Secrets
+
+secrets:
+  VAULT_TOKEN:
+    external: true
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+#Container Configuration
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    networks:
+      - schub
+    logging: *default-logging
+    volumes:
+      - vault_data:/data
+    environment:
+      DOMAIN: "https://vault.schultz-thomas.fr"
+      ADMIN_TOKEN_FILE: /run/secrets/VAULT_TOKEN
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis

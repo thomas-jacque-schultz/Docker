@@ -1,0 +1,47 @@
+version: "3.8"
+
+# Principale Network Configuration
+
+networks:
+  schub:
+    name: schub
+    driver: overlay
+    external: true
+
+# Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Volumes
+
+volumes:
+  homepage_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Homepage/Config
+      o: bind
+
+#Container Configuration
+
+services:
+
+  
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    networks:
+      - schub
+    volumes:
+      - homepage_config:/app/config 
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=homepage.schultz-thomas.fr
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+
+  

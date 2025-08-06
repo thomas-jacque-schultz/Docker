@@ -1,0 +1,47 @@
+version: '3.8'
+
+# Réseau principal (overlay externe)
+networks:
+  schub:
+    external: true
+    name: schub
+    driver: overlay
+
+# Volumes (bind sur /mnt/volume/Teamspeak)
+volumes:
+  teamspeak_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Teamspeak/Data
+      o: bind
+
+# Log Configuration
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+services:
+  teamspeak:
+    image: teamspeaksystems/teamspeak6-server:latest
+    networks:
+      - schub
+    ports:
+      - 9987:9987/udp   # Voice
+      - 10011:10011      # ServerQuery
+      - 30033:30033      # File transfer
+    volumes:
+      - teamspeak_data:/var/tsserver/
+    environment:
+      TSSERVER_LICENSE_ACCEPTED: accept
+      TZ: Europe/Paris
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+

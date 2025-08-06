@@ -1,0 +1,116 @@
+# Home Assistant Stack Configuration for Docker Swarm
+
+networks:
+  schub:
+    external: true
+
+# Log Configuration
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+services:
+
+  homeassistant-mqtt:
+    image: eclipse-mosquitto:latest
+    networks:
+      - schub
+    volumes:
+      - mqtt_data:/mosquitto
+    environment:
+      - PUID=1000
+      - PGID=1000
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  homeassistant-core:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    networks:
+      - schub
+    volumes:
+      - homeassistant_data:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  homeassistant-matter:
+    image: ghcr.io/home-assistant-libs/python-matter-server:stable
+    networks:
+      - schub
+    volumes:
+      - matter_config:/data
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    ports:
+      - "5580:5580"
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:  
+          - node.labels.name == dynamis
+
+  homeassistant-linky:
+    image: ghcr.io/bokub/ha-linky-amd64:1.5.0
+    networks:
+      - schub
+    environment:
+      - TZ=Europe/Paris
+    volumes:
+      - linky_config:/data
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:  
+          - node.labels.name == dynamis
+
+volumes:
+  homeassistant_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/HomeAssistant/Data
+  
+  mqtt_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/HomeAssistant/Connecteurs/Mqtt
+  
+  matter_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/HomeAssistant/Connecteurs/Matter
+  
+  linky_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/HomeAssistant/Connecteurs/Linky

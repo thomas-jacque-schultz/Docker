@@ -1,0 +1,130 @@
+# Media Stack Configuration for Docker Swarm
+
+networks:
+  schub:
+    external: true
+
+# Log Configuration
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+services:
+
+  media-sonarr:
+    image: linuxserver/sonarr:latest
+    networks:
+      - schub
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    volumes:
+      - sonarr_config:/config
+      - media_series:/tv
+      - media_downloads:/downloads
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  media-radarr:
+    image: linuxserver/radarr:latest
+    networks:
+      - schub
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+    volumes:
+      - radarr_config:/config
+      - media_movies:/movies
+      - media_downloads:/downloads
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  media-jellyfin:
+    image: jellyfin/jellyfin:latest
+    networks:
+      - schub
+    environment:
+      - TZ=Europe/Paris
+    volumes:
+      - jellyfin_data:/config
+      - jellyfin_cache:/cache
+      - media:/media:ro
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+volumes:
+  sonarr_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Sonarr
+
+  radarr_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Radarr
+
+  jellyfin_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Jellyfin/config
+
+  jellyfin_cache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Jellyfin/cache
+
+  media:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/media/media
+
+  media_series:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/media/media/series
+
+  media_movies:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/media/media/movie
+
+  media_downloads:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/media/download

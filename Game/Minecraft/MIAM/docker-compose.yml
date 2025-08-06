@@ -1,0 +1,71 @@
+# Minecraft MIAM Stack Configuration for Docker Swarm
+
+networks:
+  schub:
+    external: true
+
+# Secrets
+secrets:
+  MINECRAFT_RCON_PASSWORD:
+    external: true
+
+# Log Configuration
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+services:
+
+  gaming-minecraft-miam:
+    image: itzg/minecraft-server:latest
+    networks:
+      - schub
+    ports:
+      - "15005:25565"
+    volumes:
+      - minecraft_miam_data:/data
+    secrets:
+      - MINECRAFT_RCON_PASSWORD
+    environment:
+      EULA: "TRUE"
+      TYPE: "SPIGOT"
+      MEMORY: "3072M"
+      SERVER_PORT: "25565"
+      SERVER_NAME: "Miam-Corp"
+      PREVENT_PROXY_CONNECTIONS: "FALSE"
+      DIFFICULTY: "HARD"
+      ANNOUNCE_PLAYER_ACHIEVEMENTS: "TRUE"
+      GENERATE_STRUCTURES: "TRUE"
+      MODE: "SURVIVAL"
+      ALLOW_FLIGHT: "TRUE"
+      VERSION: "1.20.6"
+      MOTD: "Miam-Corp"
+      MAX_PLAYERS: "20"
+      OPS: "Buluc_Chabtan,pisel4legend"
+      ICON: "server-icon.png"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
+      RCON_PORT: "25575"
+    stdin_open: true
+    tty: true
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == loki
+
+volumes:
+  minecraft_miam_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Minecraft/MIAM

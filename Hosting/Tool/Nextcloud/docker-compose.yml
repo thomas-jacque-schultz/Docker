@@ -1,0 +1,92 @@
+version: "3.8"
+
+#Principale Network Configuration
+
+networks:
+  schub:
+    name: schub
+    driver: overlay
+    external: true
+
+# Volume
+
+volumes:
+  nextcloud_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/data/NextCloud_Schub
+      o: bind
+  nextcloud_database:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Nextcloud/Database
+      o: bind
+
+# Secrets
+
+secrets:
+  NEXTCLOUD_DB_PASSWORD:
+    external: true
+  NEXTCLOUD_DB_ROOT_PASSWORD:
+    external: true
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+#Container Configuration
+
+services:
+  nextcloud:
+    image: nextcloud
+    networks:
+      - schub
+    volumes:
+      - nextcloud_data:/var/www/html
+    secrets:
+      - NEXTCLOUD_DB_PASSWORD
+    environment:
+      - MYSQL_HOST=nextcloud_db
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD_FILE=/run/secrets/NEXTCLOUD_DB_PASSWORD
+      - OVERWRITECLIURL=nextcloud.schultz-thomas.fr
+      - OVERWRITEPROTOCOL=https
+      - TRUSTED_PROXIES="*"
+      - PHP_UPLOAD_LIMIT=100G
+      - PHP_MEMORY_LIMIT=100G
+    logging: *default-logging 
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  nextcloud_db:
+    image: mariadb
+    networks:
+      - schub
+    volumes:
+      - nextcloud_database:/var/lib/mysql
+    secrets:
+      - NEXTCLOUD_DB_PASSWORD
+      - NEXTCLOUD_DB_ROOT_PASSWORD
+    environment:
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/NEXTCLOUD_DB_ROOT_PASSWORD
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD_FILE=/run/secrets/NEXTCLOUD_DB_PASSWORD
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
