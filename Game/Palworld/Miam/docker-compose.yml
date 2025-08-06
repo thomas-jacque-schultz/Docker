@@ -1,0 +1,73 @@
+
+#Principale Network Configuration
+
+networks:
+  schub:
+    external: true
+
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+#Container Configuration
+
+services:
+
+  gaming-palworld:
+    image: thijsvanloef/palworld-server-docker:latest
+    networks:
+      - schub
+    ports:
+      - 8211:8211/udp
+      - 27015:27015/udp
+    volumes:
+      - palworld_data:/palworld/
+    stop_grace_period: 30s # Set to however long you are willing to wait for the container to gracefully stop
+    environment:
+      AUTO_UPDATE_ENABLED: "true"
+      PUID: 1000
+      PGID: 1000
+      PORT: "8211"
+      PLAYERS: "16"
+      SERVER_PASSWORD: "add"
+      MULTITHREADING: "true"
+      RCON_ENABLED: "true"
+      RCON_PORT: "25575"
+      TZ: "UTC"
+      ADMIN_PASSWORD: "add"
+      PAL_EGG_DEFAULT_HATCHING_TIME: "0.400000"
+      COMMUNITY: "true"
+      SERVER_NAME: "World of MIAM"
+      SERVER_DESCRIPTION: "palworld-server-docker by Pisel"
+      BASE_CAMP_WORKER_MAX_NUM: "20"
+      BASE_CAMP_MAX_NUM: "200"
+      AUTO_REBOOT_ENABLED: "true"
+      AUTO_REBOOT_WARN_MINUTES: "10"
+      AUTO_REBOOT_EVEN_IF_PLAYERS_ONLINE: "false"
+      AUTO_REBOOT_CRON_EXPRESSION: "0 */4 * * *"
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 12G
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == loki
+
+
+# Volume
+
+volumes:
+  palworld_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Palworld/Palworld_Miam

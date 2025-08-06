@@ -1,0 +1,85 @@
+version: "3.8"
+
+networks:
+  monitoring:
+    name: monitoring
+    driver: overlay
+    external: true
+
+volumes:
+  promtail_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Promtail/Config
+      o: bind
+  node_exporter_config:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/NodeExporter/CustomMetrics
+      o: bind
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+services:
+
+  monitoring-cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    networks:
+      - monitoring
+    ports:
+      - "9102:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    logging: *default-logging
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any   
+    labels:
+      node: "{{.Node.Hostname}}"
+
+
+  monitoring-promtail:
+    image: grafana/promtail:2.9.0
+    networks:
+      - monitoring
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/log:/var/log
+      - promtail_config:/etc/promtail
+    command: -config.file=/etc/promtail/docker-config.yml
+    logging: *default-logging
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any
+
+  monitoring-node-exporter:
+    image: prom/node-exporter:latest
+    networks:
+      - monitoring
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - node_exporter_config:/textfile_collector:ro
+    command:
+      - '--collector.textfile.directory=/textfile_collector'
+      - '--path.sysfs=/host/sys'
+      - '--path.procfs=/host/proc'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--no-collector.ipvs'
+    logging: *default-logging
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any

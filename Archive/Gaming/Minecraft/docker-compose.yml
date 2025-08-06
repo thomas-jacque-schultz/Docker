@@ -124,3 +124,61 @@ services:
           memory: 8G
     logging: *default-logging
     restart: unless-stopped
+
+  gaming-minecraft-holycube-max:
+    container_name: ${MINECRAFT_HOLYCUBE_MAX_CONTAINER_NAME}
+    image: itzg/minecraft-server
+    ports:
+      - ${MINECRAFT_HOLYCUBE_MAX_EXTERNAL_PORT}:${MINECRAFT_HOLYCUBE_MAX_INTERNAL_PORT}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_HOLYCUBE_MAX_SAVE_PATH}:/data
+    environment:
+      EULA: "TRUE"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: ${MINECRAFT_HOLYCUBE_MAX_PASSWORD}
+      RCON_PORT: ${MINECRAFT_HOLYCUBE_MAX_RCON_INTERNAL}
+      TYPE: AUTO_CURSEFORGE
+      VERSION: "1.21.1"
+      CF_SLUG: holycube-revolution
+      CF_EXCLUDE_MODS: |
+        particular-reforged
+        wakes-reforged
+        smithing-template-viewer
+      CF_API_KEY: ${CF_API_KEY}
+      MEMORY: 6G
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+    logging: *default-logging
+    restart: unless-stopped
+
+  gaming-minecraft-ozone3:
+    container_name: ${MINECRAFT_OZONE3_CONTAINER_NAME}
+    image: itzg/minecraft-server:java8-multiarch
+    ports:
+      - ${MINECRAFT_OZONE3_EXTERNAL_PORT}:${MINECRAFT_OZONE3_INTERNAL_PORT}
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MINECRAFT_OZONE3_SAVE_PATH}:/data
+    environment:
+      EULA: "TRUE"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: ${MINECRAFT_OZONE3_RCON_PASSWORD}
+      RCON_PORT: ${MINECRAFT_OZONE3_RCON_INTERNAL}
+      TYPE: AUTO_CURSEFORGE
+      VERSION: "1.12.2"
+      JAVA_VERSION: 8
+      CF_SLUG: project-ozone-3-a-new-way-forward
+      CF_API_KEY: ${CF_API_KEY}
+      MEMORY: ${MINECRAFT_OZONE3_MEMORY}
+      # Facultatif : exclusion de mods
+      CF_MODS: "253449"
+      #Options recommandées :
+      PACK_MODE: ${MINECRAFT_OZONE3_PACKMODE}
+      LEVEL_TYPE: botania-skyblock
+    deploy:
+      resources:
+        limits:
+          memory: ${MINECRAFT_OZONE3_MEMORY_LIMIT}
+    logging: *default-logging
+    restart: unless-stopped

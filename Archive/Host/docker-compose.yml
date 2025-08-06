@@ -1,0 +1,55 @@
+#Principale Network Configuration
+
+networks:
+  default:
+    name: schub_network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+#Container Configuration
+
+services:
+
+  host-front: 
+    container_name: ${FRONT_CONTAINER_NAME} 
+    ports: 
+      - ${FRONT_EXTERNAL_PORT}:${FRONT_INTERNAL_PORT} 
+    env_file: 
+      - ../.env 
+    build: ${FRONT_BUILD_PATH} 
+    hostname: front 
+    stdin_open: true 
+    tty: true 
+    logging: *default-logging 
+    restart: unless-stopped
+    
+
+  host-bot: 
+    container_name: ${DISCORD_BOT_CONTAINER_NAME} 
+    image: thomasschultzschub/discord-bot:latest 
+    env_file: 
+      - bot.env  
+    logging: *default-logging
+    depends_on:
+      - host-mongo 
+    restart: unless-stopped
+
+  host-mongo: 
+    container_name: ${MONGODB_CONTAINER_NAME} 
+    image: mongo:latest 
+    volumes:
+      - ${ROOT_PROJECT_DATA_DIR}/${MONGODB_PATH}:/data/db 
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME} 
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    logging: *default-logging 
+    restart: unless-stopped

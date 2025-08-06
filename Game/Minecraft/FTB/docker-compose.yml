@@ -1,0 +1,60 @@
+# Minecraft FTB Stack Configuration for Docker Swarm
+
+networks:
+  schub:
+    external: true
+
+# Secrets
+secrets:
+  MINECRAFT_RCON_PASSWORD:
+    external: true
+
+# Log Configuration
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+services:
+
+  gaming-minecraft-ftb:
+    image: itzg/minecraft-server:java8-multiarch
+    networks:
+      - schub
+    ports:
+      - "15007:25565"
+    volumes:
+      - minecraft_ftb_data:/data
+    secrets:
+      - MINECRAFT_RCON_PASSWORD
+    environment:
+      EULA: "TRUE"
+      TYPE: "FTBA"
+      FTB_MODPACK_ID: "35"
+      MEMORY: "4096M"
+      SERVER_PORT: "25565"
+      SERVER_NAME: "Revelation-Miam"
+      PREVENT_PROXY_CONNECTIONS: "true"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
+      RCON_PORT: "25575"
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == loki
+
+volumes:
+  minecraft_ftb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Minecraft/FTB

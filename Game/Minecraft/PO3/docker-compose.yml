@@ -1,0 +1,65 @@
+# Minecraft PO3 Stack Configuration for Docker Swarm
+
+networks:
+  schub:
+    external: true
+
+# Secrets
+secrets:
+  MINECRAFT_RCON_PASSWORD:
+    external: true
+  MINECRAFT_CF_API_KEY:
+    external: true
+
+# Log Configuration
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+services:
+
+  gaming-minecraft-po3:
+    image: itzg/minecraft-server:java8-multiarch
+    networks:
+      - schub
+    ports:
+      - "25870:25565"
+    volumes:
+      - minecraft_po3_data:/data
+    secrets:
+      - MINECRAFT_RCON_PASSWORD
+      - MINECRAFT_CF_API_KEY
+    environment:
+      EULA: "TRUE"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
+      RCON_PORT: "25875"
+      TYPE: AUTO_CURSEFORGE
+      VERSION: "1.12.2"
+      JAVA_VERSION: 8
+      CF_SLUG: project-ozone-3-a-new-way-forward
+      CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
+      MEMORY: "12G"
+      PACK_MODE: "mythic"
+      LEVEL_TYPE: botania-skyblock
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == loki
+
+volumes:
+  minecraft_po3_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Minecraft/Ozone3

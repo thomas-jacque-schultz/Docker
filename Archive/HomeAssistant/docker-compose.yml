@@ -31,6 +31,9 @@ services:
     ports:
       - "1883:1883"
       - "9001:9001"
+    environment:
+      - PUID=1000
+      - PGID=1000
     env_file:
       - ../.env
     logging: *default-logging
@@ -38,12 +41,14 @@ services:
 
   home-assistant-core:
     container_name: ${HOMEASSISTANT_CONTAINER_NAME}
-    image: homeassistant/home-assistant:latest
+    image: ghcr.io/home-assistant/home-assistant:latest
     networks:
       - default
     volumes:
       - ${ROOT_PROJECT_DATA_DIR}/${HA_CONFIG_PATH}:/config
     environment:
+      - PUID=1000
+      - PGID=1000
       - TZ=Etc/UTC
     ports:
       - "8123:8123"
@@ -84,6 +89,8 @@ services:
     volumes:
       - ${ROOT_PROJECT_DATA_DIR}/${MATTER_CONFIG_PATH}:/data
     environment:
+      - PUID=1000
+      - PGID=1000
       - TZ=Etc/UTC
     ports:
       - "5580:5580"
