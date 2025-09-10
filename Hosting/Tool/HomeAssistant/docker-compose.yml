@@ -11,6 +11,12 @@ x-logging:
   options:
     tag: "{{.Name}}"
 
+# Secrets
+
+secrets:
+  LINKY_TOKEN:
+    external: true
+
 # Container Configuration
 services:
 
@@ -74,8 +80,12 @@ services:
     image: ghcr.io/bokub/ha-linky-amd64:1.5.0
     networks:
       - schub
+    secrets:
+      - LINKY_TOKEN
     environment:
       - TZ=Europe/Paris
+      - SUPERVISOR_TOKEN_FILE=/run/secrets/LINKY_TOKEN
+      - WS_URL="ws://homeassistant-core:8123/api/websocket"
     volumes:
       - linky_config:/data
     logging: *default-logging
