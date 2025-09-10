@@ -32,21 +32,18 @@ services:
     image: gcr.io/cadvisor/cadvisor:latest
     networks:
       - monitoring
-    ports:
-      - "9102:8080"
+    hostname: "{{.Node.Hostname}}"
     volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
+      - "/:/rootfs"
+      - "/var/run:/var/run"
+      - "/sys:/sys"
+      - "/var/lib/docker/:/var/lib/docker"
+      - "/dev/disk/:/dev/disk"
     logging: *default-logging
     deploy:
       mode: global
       restart_policy:
-        condition: any   
-    labels:
-      node: "{{.Node.Hostname}}"
-
+        condition: any
 
   monitoring-promtail:
     image: grafana/promtail:2.9.0
