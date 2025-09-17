@@ -30,9 +30,8 @@ services:
 
   monitoring-cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
-    network_mode: "host"
-    ports:
-      - "9102:8080"
+    networks:
+      - monitoring
     volumes:
       - "/:/rootfs"
       - "/var/run:/var/run"
