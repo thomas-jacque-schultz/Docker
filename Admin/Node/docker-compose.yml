@@ -32,10 +32,7 @@ services:
     image: gcr.io/cadvisor/cadvisor:latest
     networks:
       - monitoring
-    command:
-      - "--hostname_override=${NODE_NAME}"
-    environment:
-      NODE_NAME: "{{.Node.Hostname}}"
+    hostname: "{{.Node.Hostname}}"
     volumes:
       - "/:/rootfs"
       - "/var/run:/var/run"
