@@ -28,6 +28,19 @@ x-logging:
 
 services:
 
+  portainer-agent:
+    image: portainer/agent:latest
+    networks:
+      - monitoring
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /:/host:ro
+    logging: *default-logging
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any
+
   monitoring-cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     networks:
@@ -80,3 +93,4 @@ services:
       mode: global
       restart_policy:
         condition: any
+
