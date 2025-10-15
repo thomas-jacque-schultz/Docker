@@ -1,0 +1,35 @@
+# Network Configuration
+networks:
+  schub:
+    external: true
+
+# Log Configuration
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+
+services:
+  gaming-assetto-corsa-miam:
+    image: seejy/assetto-server-manager:latest
+    networks:
+      - schub
+    ports:
+      - 8772:8772
+      - 8081:8081
+      - 9600:9600
+      - 9600:9600/udp
+      - 9677:9677
+    volumes:
+      - /mnt/volume/AssettoCorsa/AssettoCorsaMiam/server-install:/home/assetto/server-manager/assetto
+      - /mnt/volume/AssettoCorsa/AssettoCorsaMiam/config.yml:/home/assetto/server-manager/config.yml
+      - /mnt/volume/AssettoCorsa/AssettoCorsaMiam/server_manager.db:/home/assetto/server-manager/server_manager.db
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == loki
