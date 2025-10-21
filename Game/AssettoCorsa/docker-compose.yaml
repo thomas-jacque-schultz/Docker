@@ -3,9 +3,6 @@ networks:
   schub:
     external: true
 
-# Secrets
-secrets:
-
 # Log Configuration
 x-logging:
   &default-logging
