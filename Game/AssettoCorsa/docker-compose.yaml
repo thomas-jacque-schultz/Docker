@@ -4,26 +4,10 @@ networks:
     external: true
 
 # Log Configuration
-x-logging:
-  &default-logging
+x-logging: &default-logging
   driver: "json-file"
   options:
     tag: "{{.Name}}"
-
-# Volume Configuration
-volumes:
-  assetto_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /mnt/volume/AssettoCorsa/AssettoCorsaMiam/server-install
-      o: bind
-  assetto_config:
-    driver: local
-    driver_opts:
-      type: none
-      device: /mnt/volume/AssettoCorsa/AssettoCorsaMiam/config.yml
-      o: bind
 
 # Container Configuration
 
@@ -39,8 +23,8 @@ services:
       - 9600:9600/udp
       - 9677:9677
     volumes:
-      - assetto_data:/home/assetto/server-manager/assetto
-      - assetto_config:/home/assetto/server-manager/config.yml
+      - /mnt/volume/AssettoCorsa/AssettoCorsaMiam/server-install:/home/assetto/server-manager/assetto
+      - /mnt/volume/AssettoCorsa/AssettoCorsaMiam/config.yml:/home/assetto/server-manager/config.yml
     logging: *default-logging
     deploy:
       restart_policy:
@@ -48,4 +32,3 @@ services:
       placement:
         constraints:
           - node.labels.name == loki
-
