@@ -1,6 +1,8 @@
 version: "3.8"
 
 networks:
+  schub:
+    external: true
   monitoring:
     name: monitoring
     driver: overlay
@@ -19,6 +21,12 @@ volumes:
       type: none
       device: /mnt/volume/NodeExporter/CustomMetrics
       o: bind
+  host_volumes:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume
+      o: bind
 
 x-logging:
   &default-logging
@@ -31,10 +39,11 @@ services:
   portainer-agent:
     image: portainer/agent:latest
     networks:
-      - monitoring
+      - schub
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/host:ro
+      - host_volumes:/var/lib/docker/volumes
     logging: *default-logging
     deploy:
       mode: global

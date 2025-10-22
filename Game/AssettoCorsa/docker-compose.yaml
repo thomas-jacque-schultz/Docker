@@ -30,6 +30,8 @@ volumes:
 services:
   gaming-assetto-corsa-miam:
     image: seejy/assetto-server-manager:latest
+    networks:
+      - schub
     ports:
       - 8772:8772
       - 8081:8081
