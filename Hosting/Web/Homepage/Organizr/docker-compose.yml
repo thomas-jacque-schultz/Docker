@@ -3,18 +3,12 @@ version: '3.8'
 # Volumes
 
 volumes:
-  vault_data:
+  organizr_config:
     driver: local
     driver_opts:
       type: none
+      device: /mnt/volume/Organizr/Config
       o: bind
-      device: /mnt/volume/VaultWarden/Data
-
-# Secrets
-
-secrets:
-  VAULT_TOKEN:
-    external: true
 
 # Log Configuration
 
@@ -27,16 +21,19 @@ x-logging:
 # Services
 
 services:
-  vaultwarden:
-    image: vaultwarden/server:latest
+  organizr:
+    image: organizr/organizr:latest
     networks:
       - schub
-    logging: *default-logging
+    ports:
+      - 8080:80
     volumes:
-      - vault_data:/data
+      - organizr_config:/config
     environment:
-      DOMAIN: "https://vault.schultz-thomas.fr"
-      ADMIN_TOKEN_FILE: /run/secrets/VAULT_TOKEN
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Paris
+    logging: *default-logging
     deploy:
       restart_policy:
         condition: any

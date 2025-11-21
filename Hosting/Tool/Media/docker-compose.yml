@@ -1,76 +1,6 @@
-# Media Stack Configuration for Docker Swarm
+version: '3.8'
 
-networks:
-  schub:
-    external: true
-
-# Log Configuration
-x-logging:
-  &default-logging
-  driver: "json-file"
-  options:
-    tag: "{{.Name}}"
-
-# Container Configuration
-services:
-
-  media-sonarr:
-    image: linuxserver/sonarr:latest
-    networks:
-      - schub
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-    volumes:
-      - sonarr_config:/config
-      - media_series:/tv
-      - media_downloads:/downloads
-    logging: *default-logging
-    deploy:
-      restart_policy:
-        condition: any
-      placement:
-        constraints:
-          - node.labels.name == dynamis
-
-  media-radarr:
-    image: linuxserver/radarr:latest
-    networks:
-      - schub
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-    volumes:
-      - radarr_config:/config
-      - media_movies:/movies
-      - media_downloads:/downloads
-    logging: *default-logging
-    deploy:
-      restart_policy:
-        condition: any
-      placement:
-        constraints:
-          - node.labels.name == dynamis
-
-  media-jellyfin:
-    image: jellyfin/jellyfin:latest
-    networks:
-      - schub
-    environment:
-      - TZ=Europe/Paris
-    volumes:
-      - jellyfin_data:/config
-      - jellyfin_cache:/cache
-      - media:/media:ro
-    logging: *default-logging
-    deploy:
-      restart_policy:
-        condition: any
-      placement:
-        constraints:
-          - node.labels.name == dynamis
+# Volumes
 
 volumes:
   sonarr_config:
@@ -128,3 +58,79 @@ volumes:
       type: none
       o: bind
       device: /mnt/media/download
+
+# Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Services
+
+services:
+
+  media-sonarr:
+    image: linuxserver/sonarr:latest
+    networks:
+      - schub
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Paris
+    volumes:
+      - sonarr_config:/config
+      - media_series:/tv
+      - media_downloads:/downloads
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  media-radarr:
+    image: linuxserver/radarr:latest
+    networks:
+      - schub
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Paris
+    volumes:
+      - radarr_config:/config
+      - media_movies:/movies
+      - media_downloads:/downloads
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  media-jellyfin:
+    image: jellyfin/jellyfin:latest
+    networks:
+      - schub
+    environment:
+      TZ: Europe/Paris
+    volumes:
+      - jellyfin_data:/config
+      - jellyfin_cache:/cache
+      - media:/media:ro
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+# Networks
+
+networks:
+  schub:
+    external: true

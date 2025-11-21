@@ -1,16 +1,4 @@
-version: "3.8"
-
-# Principale Network Configuration
-
-networks:
-  schub:
-    name: schub
-    driver: overlay
-    external: true
-  monitoring:
-    name: monitoring
-    driver: overlay
-    external: true
+version: '3.8'
 
 # Volumes
 
@@ -74,7 +62,8 @@ x-logging:
   options:
     tag: "{{.Name}}"
 
-# Container Configuration
+# Services
+
 services:
 
   admin-portainer:
@@ -88,8 +77,8 @@ services:
       - PORTAINER_VIRTUAL_HOST
       - PORTAINER_VIRTUAL_PORT
     environment:
-      - VIRTUAL_HOST_FILE=/run/secrets/PORTAINER_VIRTUAL_HOST
-      - VIRTUAL_PORT_FILE=/run/secrets/PORTAINER_VIRTUAL_PORT
+      VIRTUAL_HOST_FILE: /run/secrets/PORTAINER_VIRTUAL_HOST
+      VIRTUAL_PORT_FILE: /run/secrets/PORTAINER_VIRTUAL_PORT
     command: -H unix:///var/run/docker.sock
     logging: *default-logging
     deploy:
@@ -109,10 +98,10 @@ services:
     secrets:
       - CODE_SERVER_PASSWORD
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-      - FILE__PASSWORD=/run/secrets/CODE_SERVER_PASSWORD
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Paris
+      FILE__PASSWORD: /run/secrets/CODE_SERVER_PASSWORD
     logging: *default-logging
     deploy:
       restart_policy:
@@ -131,8 +120,8 @@ services:
       - GF_SECURITY_ADMIN_USER
       - GF_SECURITY_ADMIN_PASSWORD
     environment:
-      - GF_SECURITY_ADMIN_USER__FILE=/run/secrets/GF_SECURITY_ADMIN_USER
-      - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/GF_SECURITY_ADMIN_PASSWORD
+      GF_SECURITY_ADMIN_USER__FILE: /run/secrets/GF_SECURITY_ADMIN_USER
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/GF_SECURITY_ADMIN_PASSWORD
     logging: *default-logging
     deploy:
       restart_policy:
@@ -187,3 +176,11 @@ services:
       placement:
         constraints:
           - node.labels.name == dynamis
+
+# Networks
+
+networks:
+  schub:
+    external: true
+  monitoring:
+    external: true

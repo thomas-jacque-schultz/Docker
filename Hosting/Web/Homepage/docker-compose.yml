@@ -1,20 +1,4 @@
-version: "3.8"
-
-# Principale Network Configuration
-
-networks:
-  schub:
-    name: schub
-    driver: overlay
-    external: true
-
-# Log Configuration
-
-x-logging:
-  &default-logging
-  driver: "json-file"
-  options:
-    tag: "{{.Name}}"
+version: '3.8'
 
 # Volumes
 
@@ -26,11 +10,18 @@ volumes:
       device: /mnt/volume/Homepage/Config
       o: bind
 
-#Container Configuration
+# Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Services
 
 services:
 
-  
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     networks:
@@ -38,10 +29,19 @@ services:
     volumes:
       - homepage_config:/app/config 
     environment:
-      - HOMEPAGE_ALLOWED_HOSTS=homepage.schultz-thomas.fr
+      HOMEPAGE_ALLOWED_HOSTS: homepage.schultz-thomas.fr
     logging: *default-logging
     deploy:
       restart_policy:
         condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+# Networks
+
+networks:
+  schub:
+    external: true
 
   

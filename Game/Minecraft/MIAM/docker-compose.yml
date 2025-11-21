@@ -1,22 +1,31 @@
-# Minecraft MIAM Stack Configuration for Docker Swarm
+version: '3.8'
 
-networks:
-  schub:
-    external: true
+# Volumes
+
+volumes:
+  minecraft_miam_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Minecraft/MIAM
 
 # Secrets
+
 secrets:
   MINECRAFT_RCON_PASSWORD:
     external: true
 
 # Log Configuration
+
 x-logging:
   &default-logging
   driver: "json-file"
   options:
     tag: "{{.Name}}"
 
-# Container Configuration
+# Services
+
 services:
 
   gaming-minecraft-miam:
@@ -62,10 +71,8 @@ services:
         constraints:
           - node.labels.name == loki
 
-volumes:
-  minecraft_miam_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /mnt/volume/Minecraft/MIAM
+# Networks
+
+networks:
+  schub:
+    external: true

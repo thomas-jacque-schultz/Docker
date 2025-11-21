@@ -1,13 +1,7 @@
 version: '3.8'
 
-# Réseau principal (overlay externe)
-networks:
-  schub:
-    external: true
-    name: schub
-    driver: overlay
+# Volumes
 
-# Volumes (bind sur /mnt/volume/Teamspeak)
 volumes:
   teamspeak_data:
     driver: local
@@ -17,11 +11,14 @@ volumes:
       o: bind
 
 # Log Configuration
+
 x-logging:
   &default-logging
   driver: "json-file"
   options:
     tag: "{{.Name}}"
+
+# Services
 
 services:
   teamspeak:
@@ -44,4 +41,10 @@ services:
       placement:
         constraints:
           - node.labels.name == dynamis
+
+# Networks
+
+networks:
+  schub:
+    external: true
 

@@ -1,100 +1,6 @@
-# Home Assistant Stack Configuration for Docker Swarm
+version: '3.8'
 
-networks:
-  schub:
-    external: true
-
-# Log Configuration
-x-logging:
-  &default-logging
-  driver: "json-file"
-  options:
-    tag: "{{.Name}}"
-
-# Secrets
-
-secrets:
-  LINKY_TOKEN:
-    external: true
-
-# Container Configuration
-services:
-
-  homeassistant-mqtt:
-    image: eclipse-mosquitto:latest
-    networks:
-      - schub
-    volumes:
-      - mqtt_data:/mosquitto
-    environment:
-      - PUID=1000
-      - PGID=1000
-    logging: *default-logging
-    deploy:
-      restart_policy:
-        condition: any
-      placement:
-        constraints:
-          - node.labels.name == dynamis
-
-  homeassistant-core:
-    image: ghcr.io/home-assistant/home-assistant:stable
-    networks:
-      - schub
-    volumes:
-      - homeassistant_data:/config
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-    logging: *default-logging
-    deploy:
-      restart_policy:
-        condition: any
-      placement:
-        constraints:
-          - node.labels.name == dynamis
-
-  homeassistant-matter:
-    image: ghcr.io/home-assistant-libs/python-matter-server:stable
-    networks:
-      - schub
-    volumes:
-      - matter_config:/data
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Paris
-    ports:
-      - "5580:5580"
-    logging: *default-logging
-    deploy:
-      restart_policy:
-        condition: any
-      placement:
-        constraints:  
-          - node.labels.name == dynamis
-
-  homeassistant-linky:
-    image: ghcr.io/bokub/ha-linky-amd64:1.5.0
-    networks:
-      - schub
-    secrets:
-      - LINKY_TOKEN
-    environment:
-      - TZ=Europe/Paris
-      - SUPERVISOR_TOKEN_FILE=/run/secrets/LINKY_TOKEN
-      - WS_URL="ws://homeassistant-core:8123/api/websocket"
-    volumes:
-      - linky_config:/data
-    logging: *default-logging
-    deploy:
-      restart_policy:
-        condition: any
-      placement:
-        constraints:  
-          - node.labels.name == dynamis
+# Volumes
 
 volumes:
   homeassistant_data:
@@ -124,3 +30,103 @@ volumes:
       type: none
       o: bind
       device: /mnt/volume/HomeAssistant/Connecteurs/Linky
+
+# Secrets
+
+secrets:
+  LINKY_TOKEN:
+    external: true
+
+# Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Services
+
+services:
+
+  homeassistant-mqtt:
+    image: eclipse-mosquitto:latest
+    networks:
+      - schub
+    volumes:
+      - mqtt_data:/mosquitto
+    environment:
+      PUID: 1000
+      PGID: 1000
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  homeassistant-core:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    networks:
+      - schub
+    volumes:
+      - homeassistant_data:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Paris
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  homeassistant-matter:
+    image: ghcr.io/home-assistant-libs/python-matter-server:stable
+    networks:
+      - schub
+    volumes:
+      - matter_config:/data
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Paris
+    ports:
+      - "5580:5580"
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:  
+          - node.labels.name == dynamis
+
+  homeassistant-linky:
+    image: ghcr.io/bokub/ha-linky-amd64:1.5.0
+    networks:
+      - schub
+    secrets:
+      - LINKY_TOKEN
+    environment:
+      TZ: Europe/Paris
+      SUPERVISOR_TOKEN_FILE: /run/secrets/LINKY_TOKEN
+      WS_URL: "ws://homeassistant-core:8123/api/websocket"
+    volumes:
+      - linky_config:/data
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:  
+          - node.labels.name == dynamis
+
+# Networks
+
+networks:
+  schub:
+    external: true
