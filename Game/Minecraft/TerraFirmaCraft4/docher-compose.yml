@@ -20,7 +20,7 @@ x-logging:
 # Container Configuration
 services:
   gaming-minecraft-terrafirmacraft4:
-    image: itzg/minecraft-server:latest
+    image: itzg/minecraft-server:java17
     networks:
       - schub
     ports:
@@ -30,16 +30,14 @@ services:
       - minecraft_terrafirmacraft4_modpacks:/modpacks
     secrets:
       - MINECRAFT_RCON_PASSWORD
-      - MINECRAFT_CF_API_KEY
     environment:
       EULA: "TRUE"
-      ENABLE_RCON: "true"
-      VERSION: "1.20.1"
-      RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
-      RCON_PORT: "25875"
       TYPE: CURSEFORGE
       CF_MODPACK_ZIP: "/modpacks/HTFC4-0.4.2.zip"
       MEMORY: "16G"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
+      RCON_PORT: "25875"
       ALLOW_FLIGHT: "true"
       ENABLE_COMMAND_BLOCK: "true"
     logging: *default-logging
@@ -47,8 +45,6 @@ services:
       resources:
         limits:
           memory: 20G
-      restart_policy:
-        condition: any
       placement:
         constraints:
           - node.labels.name == loki
