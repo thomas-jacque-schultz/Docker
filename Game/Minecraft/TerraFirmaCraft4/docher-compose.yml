@@ -1,0 +1,62 @@
+# Minecraft Stoneblock4 Stack Configuration for Docker Swarm
+networks:
+  schub:
+    external: true
+
+# Secrets
+secrets:
+  MINECRAFT_RCON_PASSWORD:
+    external: true
+  MINECRAFT_CF_API_KEY:
+    external: true
+
+# Log Configuration
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+services:
+  gaming-minecraft-terrafirmacraft4:
+    image: itzg/minecraft-server:latest
+    networks:
+      - schub
+    ports:
+      - "25982:25565"
+    volumes:
+      - minecraft_terrafirmacraft4_data:/data
+    secrets:
+      - MINECRAFT_RCON_PASSWORD
+      - MINECRAFT_CF_API_KEY
+    environment:
+      EULA: "TRUE"
+      ENABLE_RCON: "true"
+      RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
+      RCON_PORT: "25875"
+      TYPE: AUTO_CURSEFORGE
+      VERSION: "1.21.1"
+      CF_SLUG: hardrock-terrafirmacraft-4-realistic-extreme
+      CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
+      MEMORY: "16G"
+      ALLOW_FLIGHT: "true"
+      ENABLE_COMMAND_BLOCK: "true"
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 20G
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == loki
+
+volumes:
+  minecraft_terrafirmacraft4_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Minecraft/TerraFirmaCraft4
