@@ -40,6 +40,7 @@ services:
       RCON_PORT: "25875"
       ALLOW_FLIGHT: "true"
       ENABLE_COMMAND_BLOCK: "true"
+      CF_SERVER_MOD : "hardrock-terrafirmacraft-4-realistic-extreme"
     logging: *default-logging
     deploy:
       resources:
