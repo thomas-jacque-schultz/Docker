@@ -20,7 +20,7 @@ x-logging:
 # Container Configuration
 services:
   gaming-minecraft-terrafirmacraft4:
-    image: itzg/minecraft-server:java17
+    image: itzg/minecraft-server:latest
     networks:
       - schub
     ports:
@@ -40,7 +40,7 @@ services:
       RCON_PORT: "25875"
       ALLOW_FLIGHT: "true"
       ENABLE_COMMAND_BLOCK: "true"
-      CF_SERVER_MOD : "HTFC4-0.4.2"
+      CF_SERVER_MOD : "HTFC4-0.4.2.zip"
     logging: *default-logging
     deploy:
       resources:
