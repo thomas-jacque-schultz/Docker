@@ -38,7 +38,7 @@ services:
       RCON_PORT: "25875"
       TYPE: CURSEFORGE
       VERSION: "1.21.1"
-      CF_MODPACK_ZIP: "/modpacks/HTFC4-0.4.2.zip
+      CF_MODPACK_ZIP: "/modpacks/HTFC4-0.4.2.zip"
       MEMORY: "16G"
       ALLOW_FLIGHT: "true"
       ENABLE_COMMAND_BLOCK: "true"
