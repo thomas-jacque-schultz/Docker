@@ -37,7 +37,6 @@ services:
       RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
       RCON_PORT: "25875"
       TYPE: CURSEFORGE
-      VERSION: "1.21.1"
       CF_MODPACK_ZIP: "/modpacks/HTFC4-0.4.2.zip"
       MEMORY: "16G"
       ALLOW_FLIGHT: "true"
