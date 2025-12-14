@@ -27,6 +27,7 @@ services:
       - "25982:25565"
     volumes:
       - minecraft_terrafirmacraft4_data:/data
+      - minecraft_terrafirmacraft4_modpacks:/modpacks
     secrets:
       - MINECRAFT_RCON_PASSWORD
       - MINECRAFT_CF_API_KEY
@@ -35,10 +36,9 @@ services:
       ENABLE_RCON: "true"
       RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
       RCON_PORT: "25875"
-      TYPE: AUTO_CURSEFORGE
+      TYPE: CURSEFORGE
       VERSION: "1.21.1"
-      CF_SLUG: hardrock-terrafirmacraft-4-realistic-extreme
-      CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
+      CF_MODPACK_ZIP: "/modpacks/HTFC4-0.4.2.zip
       MEMORY: "16G"
       ALLOW_FLIGHT: "true"
       ENABLE_COMMAND_BLOCK: "true"
@@ -59,4 +59,10 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /mnt/volume/Minecraft/TerraFirmaCraft4
+      device: /mnt/volume/Minecraft/TerraFirmaCraft4/Data
+  minecraft_terrafirmacraft4_modpacks:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Minecraft/TerraFirmaCraft4/Modpacks
