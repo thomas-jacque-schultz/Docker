@@ -35,7 +35,7 @@ services:
       ENABLE_RCON: "true"
       RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
       RCON_PORT: "25875"
-      TYPE: AUTO_CURSEFORGE
+      TYPE: NEOFORGE
       VERSION: "1.21.1"
       CF_SLUG: ftb-stoneblock-4
       CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
@@ -43,7 +43,6 @@ services:
       ALLOW_FLIGHT: "true"
       ENABLE_COMMAND_BLOCK: "true"
       CF_FILENAME_MATCHER: 1.5.0
-      FORGE_VERSION: "47.2.0"
     logging: *default-logging
     deploy:
       resources:
