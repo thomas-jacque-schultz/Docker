@@ -43,6 +43,8 @@ services:
       ALLOW_FLIGHT: "true"
       ENABLE_COMMAND_BLOCK: "true"
       CF_FILENAME_MATCHER: 1.5.0
+      CURSEFORGE_FILES: |
+        ctm
     logging: *default-logging
     deploy:
       resources:
