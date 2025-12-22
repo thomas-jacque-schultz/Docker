@@ -42,7 +42,7 @@ services:
       MEMORY: "20G"
       ALLOW_FLIGHT: "true"
       ENABLE_COMMAND_BLOCK: "true"
-      CF_FILENAME_MATCHER: 1.2.1
+      CF_FILENAME_MATCHER: 1.5.0
     logging: *default-logging
     deploy:
       resources:
