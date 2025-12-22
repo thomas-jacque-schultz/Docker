@@ -20,7 +20,7 @@ x-logging:
 # Container Configuration
 services:
   gaming-minecraft-stoneblock4:
-    image: itzg/minecraft-server:latest
+    image: itzg/minecraft-server:stable-java21-jdk
     networks:
       - schub
     ports:
@@ -36,7 +36,7 @@ services:
       RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
       RCON_PORT: "25875"
       TYPE: AUTO_CURSEFORGE
-      VERSION: "1.20.1"
+      VERSION: "1.21.1"
       CF_SLUG: ftb-stoneblock-4
       CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
       MEMORY: "20G"
