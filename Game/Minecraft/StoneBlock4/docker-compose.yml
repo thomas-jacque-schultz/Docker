@@ -60,4 +60,4 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /mnt/volume/Minecraft/Stoneblock4
+      device: /mnt/volume/Minecraft/test
