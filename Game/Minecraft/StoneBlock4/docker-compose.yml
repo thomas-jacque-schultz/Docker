@@ -35,7 +35,7 @@ services:
       ENABLE_RCON: "true"
       RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
       RCON_PORT: "25875"
-      TYPE: NEOFORGE
+      TYPE: AUTO_CURSEFORGE
       VERSION: "1.21.1"
       CF_SLUG: ftb-stoneblock-4
       CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
