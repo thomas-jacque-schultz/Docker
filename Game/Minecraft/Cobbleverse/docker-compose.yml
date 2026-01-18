@@ -40,6 +40,7 @@ services:
       RCON_PORT: "25905"
 
       TYPE: AUTO_CURSEFORGE
+      CF_SLUG: cobbleverse-cobblemon
       CF_MODPACK_ZIP: /modpacks/COBBLEVERSE-1.7.2-CF.zip
       CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
 
