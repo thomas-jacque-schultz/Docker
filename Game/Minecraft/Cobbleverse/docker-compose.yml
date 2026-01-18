@@ -43,9 +43,6 @@ services:
       CF_SLUG: cobbleverse-cobblemon
       CF_MODPACK_ZIP: /modpacks/COBBLEVERSE-1.7.2-CF.zip
       CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
-
-      VERSION: "1.21.1"
-      JAVA_VERSION: 17
       MEMORY: "12G"
 
     deploy:
