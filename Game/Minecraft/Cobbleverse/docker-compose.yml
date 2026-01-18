@@ -28,7 +28,7 @@ services:
       - "25900:25565"
     volumes:
       - minecraft_cobbleverse_data:/data
-      - /mnt/volume/Minecraft/modpacks:/modpacks:ro
+      - minecraft_cobbleverse_modpacks:/modpacks:ro
     secrets:
       - MINECRAFT_RCON_PASSWORD
       - MINECRAFT_CF_API_KEY
@@ -62,3 +62,9 @@ volumes:
       type: none
       o: bind
       device: /mnt/volume/Minecraft/Cobbleverse
+  minecraft_cobbleverse_modpacks:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Minecraft/Cobbleverse/modpacks
