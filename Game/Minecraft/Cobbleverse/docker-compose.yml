@@ -28,37 +28,29 @@ services:
       - "25900:25565"
     volumes:
       - minecraft_cobbleverse_data:/data
+      - /mnt/volume/Minecraft/modpacks:/modpacks:ro
     secrets:
       - MINECRAFT_RCON_PASSWORD
       - MINECRAFT_CF_API_KEY
     environment:
       EULA: "TRUE"
 
-      # RCON
       ENABLE_RCON: "true"
       RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
       RCON_PORT: "25905"
 
-      # CurseForge
       TYPE: AUTO_CURSEFORGE
-      CF_SLUG: cobbleverse-cobblemon
+      CF_MODPACK_ZIP: /modpacks/COBBLEVERSE-1.7.2-CF.zip
       CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
 
-      # Minecraft / Java
       VERSION: "1.21.1"
       JAVA_VERSION: 17
-
-      # Mémoire JVM
       MEMORY: "12G"
-
-    logging: *default-logging
 
     deploy:
       resources:
         limits:
           memory: 16G
-      restart_policy:
-        condition: any
       placement:
         constraints:
           - node.labels.name == loki
