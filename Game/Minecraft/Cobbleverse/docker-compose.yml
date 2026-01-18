@@ -1,0 +1,72 @@
+# Minecraft Cobbleverse (Cobblemon) Stack Configuration for Docker Swarm
+
+networks:
+  schub:
+    external: true
+
+# Secrets
+secrets:
+  MINECRAFT_RCON_PASSWORD:
+    external: true
+  MINECRAFT_CF_API_KEY:
+    external: true
+
+# Log Configuration
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+services:
+
+  gaming-minecraft-cobbleverse:
+    image: itzg/minecraft-server:latest
+    networks:
+      - schub
+    ports:
+      - "25900:25565"
+    volumes:
+      - minecraft_cobbleverse_data:/data
+    secrets:
+      - MINECRAFT_RCON_PASSWORD
+      - MINECRAFT_CF_API_KEY
+    environment:
+      EULA: "TRUE"
+
+      # RCON
+      ENABLE_RCON: "true"
+      RCON_PASSWORD_FILE: /run/secrets/MINECRAFT_RCON_PASSWORD
+      RCON_PORT: "25905"
+
+      # CurseForge
+      TYPE: AUTO_CURSEFORGE
+      CF_SLUG: cobbleverse-cobblemon
+      CF_API_KEY_FILE: /run/secrets/MINECRAFT_CF_API_KEY
+
+      # Minecraft / Java
+      VERSION: "1.21.1"
+      JAVA_VERSION: 17
+
+      # Mémoire JVM
+      MEMORY: "12G"
+
+    logging: *default-logging
+
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == loki
+
+volumes:
+  minecraft_cobbleverse_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Minecraft/Cobbleverse
