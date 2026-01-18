@@ -21,7 +21,7 @@ x-logging:
 services:
 
   gaming-minecraft-cobbleverse:
-    image: itzg/minecraft-server:latest
+    image: itzg/minecraft-server:java21
     networks:
       - schub
     ports:
