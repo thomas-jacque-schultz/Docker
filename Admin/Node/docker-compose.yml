@@ -51,7 +51,7 @@ services:
         condition: any
 
   monitoring-cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:v0.47.1
     networks:
       - monitoring
     hostname: "{{.Node.Hostname}}"
@@ -68,7 +68,7 @@ services:
         condition: any
 
   monitoring-promtail:
-    image: grafana/promtail:2.9.0
+    image: grafana/promtail:2.9.17
     networks:
       - monitoring
     volumes:
@@ -83,7 +83,7 @@ services:
         condition: any
 
   monitoring-node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.9.1
     networks:
       - monitoring
     volumes:

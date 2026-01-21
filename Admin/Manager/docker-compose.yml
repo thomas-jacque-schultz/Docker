@@ -111,7 +111,7 @@ services:
           - node.labels.name == dynamis
 
   monitoring-grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.2.0
     networks:
       - monitoring
     volumes:
@@ -131,7 +131,7 @@ services:
           - node.labels.name == dynamis
 
   monitoring-loki:
-    image: grafana/loki:2.9.0
+    image: grafana/loki:2.9.17
     networks:
       - monitoring
     volumes:
@@ -146,7 +146,7 @@ services:
           - node.labels.name == dynamis
 
   monitoring-prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.48.0
     networks:
       - monitoring
     volumes:
