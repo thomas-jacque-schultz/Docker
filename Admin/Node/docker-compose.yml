@@ -55,6 +55,7 @@ services:
     networks:
       - monitoring
     hostname: "{{.Node.Hostname}}"
+    privileged: true
     volumes:
       - "/:/rootfs:ro"
       - "/var/run:/var/run:ro"
