@@ -50,22 +50,22 @@ services:
       restart_policy:
         condition: any
 
-  monitoring-cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.47.1
-    networks:
-      - monitoring
-    hostname: "{{.Node.Hostname}}"
-    volumes:
-      - "/:/rootfs"
-      - "/var/run:/var/run"
-      - "/sys:/sys"
-      - "/var/lib/docker/:/var/lib/docker"
-      - "/dev/disk/:/dev/disk"
-    logging: *default-logging
-    deploy:
-      mode: global
-      restart_policy:
-        condition: any
+monitoring-cadvisor:
+  image: gcr.io/cadvisor/cadvisor:v0.49.1
+  networks:
+    - monitoring
+  hostname: "{{.Node.Hostname}}"
+  volumes:
+    - "/:/rootfs:ro"
+    - "/var/run:/var/run:ro"
+    - "/sys:/sys:ro"
+    - "/var/lib/docker:/var/lib/docker:ro"
+    - "/dev:/dev:ro"
+  logging: *default-logging
+  deploy:
+    mode: global
+    restart_policy:
+      condition: any
 
   monitoring-promtail:
     image: grafana/promtail:2.9.17
