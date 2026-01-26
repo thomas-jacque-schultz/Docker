@@ -51,11 +51,13 @@ services:
         condition: any
 
   monitoring-cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    image: ghcr.io/google/cadvisor:0.55.1
     networks:
       - monitoring
     hostname: "{{.Node.Hostname}}"
     privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
     volumes:
       - "/:/rootfs:ro"
       - "/var/run:/var/run:ro"
