@@ -1,0 +1,116 @@
+version: '3.8'
+
+# Volumes
+
+volumes:
+  matrix_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Matrix/Data
+
+  matrix_postgres:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Matrix/Database
+
+  element_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Matrix/Element
+
+# Secrets
+
+secrets:
+  POSTGRES_PASSWORD:
+    external: true
+  MATRIX_REGISTRATION_SECRET:
+    external: true
+
+# Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Services
+
+services:
+
+  matrix-postgres:
+    image: postgres:16-alpine
+    networks:
+      - matrix-internal
+    volumes:
+      - matrix_postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: synapse
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD_FILE: /run/secrets/POSTGRES_PASSWORD
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    secrets:
+      - POSTGRES_PASSWORD
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  matrix-synapse:
+    image: matrixdotorg/synapse:latest
+    networks:
+      - schub
+      - matrix-internal
+    volumes:
+      - matrix_data:/data
+    environment:
+      SYNAPSE_SERVER_NAME: matrix.schultz-thomas.fr
+      SYNAPSE_REPORT_STATS: "no"
+      TZ: Europe/Paris
+    secrets:
+      - POSTGRES_PASSWORD
+      - MATRIX_REGISTRATION_SECRET
+    logging: *default-logging
+    depends_on:
+      - matrix-postgres
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  matrix-element:
+    image: vectorim/element-web:latest
+    networks:
+      - schub
+    volumes:
+      - element_config:/app/config
+    environment:
+      TZ: Europe/Paris
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+# Networks
+
+networks:
+  schub:
+    external: true
+  matrix-internal:
+    driver: overlay
+    internal: true
+
