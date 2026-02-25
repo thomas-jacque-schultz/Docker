@@ -105,7 +105,7 @@ services:
       PMA_PASSWORD_FILE: /run/secrets/DYMAS_MYSQL_ROOT_PASSWORD
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/DYMAS_MYSQL_ROOT_PASSWORD
     ports:
-      - "8081:80"
+      - "18080:80"
     logging: *default-logging 
     deploy:
       restart_policy:
