@@ -63,7 +63,7 @@ services:
           - node.labels.name == dynamis
 
   wordpress:
-    image: wordpress@sha256:97024b88f7d425ee7feb96834bcc862b99d0c31f63bffc1e0d24b17a156c174e
+    image: wordpress:6.9.1-apache
     container_name: dymas-wordpress
     networks:
       - schub
