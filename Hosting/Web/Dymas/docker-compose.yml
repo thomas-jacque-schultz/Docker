@@ -48,8 +48,8 @@ services:
       - DYMAS_MYSQL_PASSWORD
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/DYMAS_MYSQL_ROOT_PASSWORD
-      MYSQL_DATABASE: dymas_wordpress
-      MYSQL_USER: dymas
+      MYSQL_DATABASE: dymas_shop
+      MYSQL_USER: dymas_user
       MYSQL_PASSWORD_FILE: /run/secrets/DYMAS_MYSQL_PASSWORD
     ports:
       - "3306:3306"
@@ -75,8 +75,8 @@ services:
       - DYMAS_MYSQL_PASSWORD
     environment:
       WORDPRESS_DB_HOST: mysql
-      WORDPRESS_DB_NAME: dymas_wordpress
-      WORDPRESS_DB_USER: dymas
+      WORDPRESS_DB_NAME: dymas_shop
+      WORDPRESS_DB_USER: dymas_user
       WORDPRESS_DB_PASSWORD_FILE: /run/secrets/DYMAS_MYSQL_PASSWORD
       WORDPRESS_TABLE_PREFIX: wp_
       WORDPRESS_DEBUG: "false"
