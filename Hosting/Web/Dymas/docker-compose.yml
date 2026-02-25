@@ -1,0 +1,121 @@
+version: '3.8'
+
+# Volumes
+
+volumes:
+  dymas_mysql:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Dymas/Database
+      o: bind
+  dymas_wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/Dymas/Wordpress
+      o: bind
+
+# Secrets
+
+secrets:
+  DYMAS_MYSQL_ROOT_PASSWORD:
+    external: true
+  DYMAS_MYSQL_PASSWORD:
+    external: true
+
+# Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Services
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: dymas-mysql
+    networks:
+      - schub
+    volumes:
+      - dymas_mysql:/var/lib/mysql
+    secrets:
+      - DYMAS_MYSQL_ROOT_PASSWORD
+      - DYMAS_MYSQL_PASSWORD
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/DYMAS_MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: dymas_wordpress
+      MYSQL_USER: dymas
+      MYSQL_PASSWORD_FILE: /run/secrets/DYMAS_MYSQL_PASSWORD
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    logging: *default-logging 
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  wordpress:
+    image: wordpress@sha256:97024b88f7d425ee7feb96834bcc862b99d0c31f63bffc1e0d24b17a156c174e
+    container_name: dymas-wordpress
+    networks:
+      - schub
+    depends_on:
+      - mysql
+    volumes:
+      - dymas_wordpress:/var/www/html
+    secrets:
+      - DYMAS_MYSQL_PASSWORD
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_NAME: dymas_wordpress
+      WORDPRESS_DB_USER: dymas
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/DYMAS_MYSQL_PASSWORD
+      WORDPRESS_TABLE_PREFIX: wp_
+      WORDPRESS_DEBUG: "false"
+    ports:
+      - "8095:80"
+    logging: *default-logging 
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: dymas-phpmyadmin
+    networks:
+      - schub
+    depends_on:
+      - mysql
+    secrets:
+      - DYMAS_MYSQL_ROOT_PASSWORD
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD_FILE: /run/secrets/DYMAS_MYSQL_ROOT_PASSWORD
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/DYMAS_MYSQL_ROOT_PASSWORD
+    ports:
+      - "8081:80"
+    logging: *default-logging 
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+# Networks
+
+networks:
+  schub:
+    external: true
