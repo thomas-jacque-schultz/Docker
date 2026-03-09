@@ -106,7 +106,7 @@ services:
           - node.labels.name == dynamis
 
   homeassistant-linky:
-    image: ghcr.io/bokub/ha-linky-amd64:1.5.0
+    image: ghcr.io/bokub/ha-linky-amd64:1.7.0
     networks:
       - schub
     secrets:
