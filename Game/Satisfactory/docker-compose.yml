@@ -1,0 +1,56 @@
+# Satisfactory Stack Configuration for Docker Swarm
+
+networks:
+  schub:
+    external: true
+
+# Log Configuration
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Container Configuration
+services:
+
+  gaming-satisfactory:
+    image: wolveix/satisfactory-server:latest
+    hostname: satisfactory
+    networks:
+      - schub
+    ports:
+      - "7777:7777/udp"
+      - "7777:7777/tcp"
+    volumes:
+      - satisfactory_data:/config
+    environment:
+      MAXPLAYERS: "4"
+      PGID: "1000"
+      PUID: "1000"
+      STEAMBETA: "false"
+      AUTOPAUSE: "true"
+      AUTOSAVEINTERVAL: "300"
+      NETWORKQUALITY: "3"
+    stop_grace_period: 30s
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 16G
+        reservations:
+          memory: 10G
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == loki
+
+# Volumes
+volumes:
+  satisfactory_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Satisfactory
