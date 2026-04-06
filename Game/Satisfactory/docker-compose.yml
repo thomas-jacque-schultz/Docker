@@ -15,13 +15,14 @@ x-logging:
 services:
 
   gaming-satisfactory:
-    image: wolveix/satisfactory-server:latest
+    image: wolveix/satisfactory-server:v1.9.10
     hostname: satisfactory
     networks:
       - schub
     ports:
       - "7777:7777/udp"
       - "7777:7777/tcp"
+      - "8888:8888/tcp"
     volumes:
       - satisfactory_data:/config
     environment:
