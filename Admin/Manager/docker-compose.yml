@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 # Volumes
 
@@ -14,7 +14,7 @@ volumes:
     driver_opts:
       type: none
       device: /mnt/volume/CodeServer/Config
-      o: bind  
+      o: bind
   grafana_data:
     driver: local
     driver_opts:
@@ -56,8 +56,7 @@ secrets:
 
 # Log Configuration
 
-x-logging:
-  &default-logging
+x-logging: &default-logging
   driver: "json-file"
   options:
     tag: "{{.Name}}"
@@ -65,7 +64,6 @@ x-logging:
 # Services
 
 services:
-
   admin-portainer:
     image: portainer/portainer-ee:latest
     networks:
@@ -89,7 +87,7 @@ services:
           - node.labels.name == dynamis
 
   admin-code-server:
-    image: lscr.io/linuxserver/code-server:latest
+    image: lscr.io/linuxserver/code-server:4.115.0
     networks:
       - schub
     volumes:
@@ -125,7 +123,7 @@ services:
     logging: *default-logging
     deploy:
       restart_policy:
-        condition: any    
+        condition: any
       placement:
         constraints:
           - node.labels.name == dynamis
@@ -152,7 +150,7 @@ services:
     volumes:
       - prometheus_config:/etc/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+      - "--config.file=/etc/prometheus/prometheus.yml"
     logging: *default-logging
     deploy:
       restart_policy:
