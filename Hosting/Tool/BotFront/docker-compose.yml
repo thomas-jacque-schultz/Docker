@@ -1,0 +1,111 @@
+version: "3.8"
+
+# Volumes
+
+volumes:
+  mongo_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/BotFront/Database
+
+# Secrets
+
+secrets:
+  MONGO_ROOT_USERNAME:
+    external: true
+  MONGO_ROOT_PASSWORD:
+    external: true
+  DISCORD_TOKEN:
+    external: true
+  PORTAINER_TOKEN:
+    external: true
+
+# Log Configuration
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Services
+
+services:
+  bot-mongo:
+    image: mongo:7
+    networks:
+      - schub
+    environment:
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/MONGO_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/MONGO_ROOT_PASSWORD
+      MONGO_INITDB_DATABASE: discordbot
+      TZ: Europe/Paris
+    secrets:
+      - MONGO_ROOT_USERNAME
+      - MONGO_ROOT_PASSWORD
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  discord-bot:
+    image: schub/discord-bot:latest
+    networks:
+      - schub
+    environment:
+      MONGO_URI: /run/secrets/MONGO_ROOT_USERNAME # example mongodb://admin:change-me@bot-mongo:27017/discordbot?authSource=admin
+      DISCORD_TOKEN_FILE: /run/secrets/DISCORD_TOKEN
+      DISCORD_ADMIN_ID: 245281978054737920
+      DISCORD_ADMIN_USERNAME: admin
+      PORTAINER_VIRTUAL_HOST: default-value
+      PORTAINER_TOKEN_FILE: /run/secrets/PORTAINER_TOKEN
+      TZ: Europe/Paris
+    secrets:
+      - DISCORD_TOKEN
+      - PORTAINER_TOKEN
+    depends_on:
+      - bot-mongo
+    ports:
+      - "8081:8080"
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  game-front:
+    image: schub/game-front:latest
+    networks:
+      - schub
+    depends_on:
+      - discord-bot
+    ports:
+      - "8080:80"
+    environment:
+      TZ: Europe/Paris
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+# Networks
+
+networks:
+  schub:
+    external: true
