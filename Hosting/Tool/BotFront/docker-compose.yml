@@ -64,16 +64,17 @@ services:
     networks:
       - schub
     environment:
-      MONGO_URI: /run/secrets/MONGO_ROOT_USERNAME # example mongodb://admin:change-me@bot-mongo:27017/discordbot?authSource=admin
-      DISCORD_TOKEN_FILE: /run/secrets/DISCORD_TOKEN
+      MONGO_DNS_NAME: bot-mongo:27017 # example mongodb://admin:change-me@bot-mongo:27017/discordbot?authSource=admin
+      MONGO_DB: discordbot
       DISCORD_ADMIN_ID: 245281978054737920
       DISCORD_ADMIN_USERNAME: admin
       PORTAINER_VIRTUAL_HOST: default-value
-      PORTAINER_TOKEN_FILE: /run/secrets/PORTAINER_TOKEN
       TZ: Europe/Paris
     secrets:
-      - DISCORD_TOKEN
-      - PORTAINER_TOKEN
+      - source: MONGO_ROOT_USERNAME
+      - source: MONGO_ROOT_PASSWORD
+      - source: DISCORD_TOKEN
+      - source: PORTAINER_TOKEN
     depends_on:
       - bot-mongo
     ports:

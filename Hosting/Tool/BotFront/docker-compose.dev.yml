@@ -1,0 +1,57 @@
+services:
+  bot-mongo:
+    image: mongo:7
+    container_name: botfront-dev-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+      TZ: Europe/Paris
+    volumes:
+      - mongo_data_dev:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "27017:27017"
+
+  discord-bot:
+    build:
+      context: ../../../../Bot
+      dockerfile: Dockerfile.dev
+    image: botfront-dev/discord-bot:local
+    container_name: botfront-dev-bot
+    environment:
+      MONGO_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_HOST: bot-mongo
+      MONGO_DB: ${MONGO_DB}
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_ADMIN_ID: ${DISCORD_ADMIN_ID}
+      DISCORD_ADMIN_USERNAME: ${DISCORD_ADMIN_USERNAME}
+      PORTAINER_VIRTUAL_HOST: ${PORTAINER_VIRTUAL_HOST}
+      PORTAINER_TOKEN: ${PORTAINER_TOKEN}
+      TZ: Europe/Paris
+    depends_on:
+      bot-mongo:
+        condition: service_healthy
+    ports:
+      - "18081:8080"
+
+  game-front:
+    build:
+      context: ../../../../Front
+      dockerfile: Dockerfile
+    image: botfront-dev/game-front:local
+    container_name: botfront-dev-front
+    depends_on:
+      - discord-bot
+    ports:
+      - "18080:80"
+    environment:
+      TZ: Europe/Paris
+
+volumes:
+  mongo_data_dev:
