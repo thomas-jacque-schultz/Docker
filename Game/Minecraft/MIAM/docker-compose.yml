@@ -50,7 +50,7 @@ services:
       GENERATE_STRUCTURES: "TRUE"
       MODE: "SURVIVAL"
       ALLOW_FLIGHT: "TRUE"
-      VERSION: "1.20.6"
+      VERSION: "26.1.2"
       MOTD: "Miam-Corp"
       MAX_PLAYERS: "20"
       OPS: "Buluc_Chabtan,pisel4legend"
