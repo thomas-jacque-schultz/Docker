@@ -93,6 +93,7 @@ services:
     volumes:
       - code_server_config:/config
       - /home/pisel:/home/coder/project
+      - /var/run/docker.sock:/var/run/docker.sock
     secrets:
       - CODE_SERVER_PASSWORD
     environment:
