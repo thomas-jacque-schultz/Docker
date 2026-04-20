@@ -35,8 +35,7 @@ services:
       PORTAINER_TOKEN: ${PORTAINER_TOKEN}
       TZ: Europe/Paris
     depends_on:
-      bot-mongo:
-        condition: service_healthy
+      - bot-mongo
     ports:
       - "18081:8080"
 
