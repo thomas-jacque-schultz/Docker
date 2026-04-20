@@ -90,6 +90,8 @@ services:
     image: lscr.io/linuxserver/code-server:4.116.0
     networks:
       - schub
+    group_add:
+      - "109"
     volumes:
       - code_server_config:/config
       - /home/pisel:/home/coder/project
