@@ -1,7 +1,6 @@
 services:
   bot-mongo:
     image: mongo:7
-    container_name: botfront-dev-mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
@@ -16,13 +15,13 @@ services:
       retries: 5
     ports:
       - "27017:27017"
+    networks:
+      - schub
 
-  discord-bot:
+  bot-back:
     build:
       context: ../../../../Bot
       dockerfile: Dockerfile.dev
-    image: botfront-dev/discord-bot:local
-    container_name: botfront-dev-bot
     environment:
       MONGO_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
       MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
@@ -33,24 +32,40 @@ services:
       DISCORD_ADMIN_USERNAME: ${DISCORD_ADMIN_USERNAME}
       PORTAINER_VIRTUAL_HOST: ${PORTAINER_VIRTUAL_HOST}
       PORTAINER_TOKEN: ${PORTAINER_TOKEN}
+      APP_ADMIN_USERNAME: ${APP_ADMIN_USERNAME:-admin}
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-change-me}
+      APP_JWT_SECRET: ${APP_JWT_SECRET:-change-this-jwt-secret-key-with-at-least-32-characters}
+      APP_JWT_EXPIRATION_SECONDS: ${APP_JWT_EXPIRATION_SECONDS:-3600}
+      APP_CORS_ALLOWED_ORIGINS: ${APP_CORS_ALLOWED_ORIGINS:-http://localhost:18090,http://localhost:5173,https://dev.schultz-thomas.fr}
       TZ: Europe/Paris
     depends_on:
       - bot-mongo
     ports:
       - "18081:8080"
+    networks:
+      - schub
 
-  game-front:
+  bot-front:
     build:
       context: ../../../../Front
       dockerfile: Dockerfile
-    image: botfront-dev/game-front:local
-    container_name: botfront-dev-front
     depends_on:
-      - discord-bot
+      - bot-back
+    networks:
+      - schub
     ports:
-      - "18080:80"
+      - "18090:80"
     environment:
       TZ: Europe/Paris
 
 volumes:
   mongo_data_dev:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/MongoBotDev
+
+networks:
+  schub:
+    external: true

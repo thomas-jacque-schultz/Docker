@@ -90,8 +90,6 @@ services:
     image: lscr.io/linuxserver/code-server:4.116.0
     networks:
       - schub
-    group_add:
-      - "109"
     volumes:
       - code_server_config:/config
       - /home/pisel:/home/coder/project
@@ -99,8 +97,8 @@ services:
     secrets:
       - CODE_SERVER_PASSWORD
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: 0
+      PGID: 0
       TZ: Europe/Paris
       FILE__PASSWORD: /run/secrets/CODE_SERVER_PASSWORD
     logging: *default-logging
