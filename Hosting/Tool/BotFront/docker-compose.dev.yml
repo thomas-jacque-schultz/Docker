@@ -32,16 +32,12 @@ services:
       DISCORD_ADMIN_USERNAME: ${DISCORD_ADMIN_USERNAME}
       PORTAINER_VIRTUAL_HOST: ${PORTAINER_VIRTUAL_HOST}
       PORTAINER_TOKEN: ${PORTAINER_TOKEN}
-      APP_ADMIN_USERNAME: ${APP_ADMIN_USERNAME:-admin}
-      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-change-me}
-      APP_JWT_SECRET: ${APP_JWT_SECRET:-change-this-jwt-secret-key-with-at-least-32-characters}
-      APP_JWT_EXPIRATION_SECONDS: ${APP_JWT_EXPIRATION_SECONDS:-3600}
-      APP_CORS_ALLOWED_ORIGINS: ${APP_CORS_ALLOWED_ORIGINS:-http://localhost:18090,http://localhost:5173,https://dev.schultz-thomas.fr}
+      BOT_INTERNAL_SECRET: ${BOT_INTERNAL_SECRET:-change-me-bot-internal-secret}
       TZ: Europe/Paris
     depends_on:
       - bot-mongo
     ports:
-      - "18081:8080"
+      - "127.0.0.1:18081:8080"
     networks:
       - schub
 
@@ -58,14 +54,32 @@ services:
     environment:
       TZ: Europe/Paris
 
+  schub-back:
+    build:
+      context: ../../../../Back
+      dockerfile: Dockerfile.dev
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@bot-mongo:27017/${SCHUB_MONGO_DB}?authSource=admin
+      AUTH_JWT_SECRET: ${APP_JWT_SECRET:-change-this-jwt-secret-key-with-at-least-32-characters}
+      AUTH_JWT_EXPIRATION_SECONDS: ${APP_JWT_EXPIRATION_SECONDS:-3600}
+      AUTH_ADMIN_USERNAME: ${APP_ADMIN_USERNAME:-admin}
+      AUTH_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-change-me}
+      AUTH_CORS_ALLOWED_ORIGINS: ${APP_CORS_ALLOWED_ORIGINS:-http://localhost:18090,http://localhost:5173,https://dev.schultz-thomas.fr}
+      BOT_BASE_URL: http://bot-back:8080
+      BOT_INTERNAL_SECRET: ${BOT_INTERNAL_SECRET:-change-me-bot-internal-secret}
+      TZ: Europe/Paris
+    depends_on:
+      bot-mongo:
+        condition: service_healthy
+      bot-back:
+        condition: service_started
+    ports:
+      - "18082:8080"
+    networks:
+      - schub
+
 volumes:
   mongo_data_dev:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /mnt/volume/MongoBotDev
-
 networks:
   schub:
     external: true
