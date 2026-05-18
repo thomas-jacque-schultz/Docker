@@ -1,0 +1,100 @@
+version: "3.8"
+
+# Volumes
+
+volumes:
+  mail_rspamd_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/MailFilter/Rspamd
+  mail_clamav_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/MailFilter/ClamAV
+
+# Log Configuration
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+# Services
+
+services:
+  mail-rspamd:
+    image: rspamd/rspamd:latest
+    networks:
+      - schub
+    volumes:
+      - mail_rspamd_data:/var/lib/rspamd
+      - ./rspamd-local.conf:/etc/rspamd/local.d/settings.conf:ro
+    environment:
+      TZ: Europe/Paris
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  mail-clamav:
+    image: clamav/clamav:latest
+    networks:
+      - schub
+    volumes:
+      - mail_clamav_data:/var/lib/clamav
+    environment:
+      TZ: Europe/Paris
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  mail-filter:
+    build:
+      context: ./filter
+      dockerfile: Dockerfile
+    networks:
+      - schub
+    environment:
+      IMAP_HOST: ${IMAP_HOST}
+      IMAP_PORT: ${IMAP_PORT:-993}
+      IMAP_USER: ${IMAP_USER}
+      IMAP_PASSWORD: ${IMAP_PASSWORD}
+      RSPAMD_HOST: mail-rspamd
+      RSPAMD_PORT: 11333
+      CLAMAV_HOST: mail-clamav
+      CLAMAV_PORT: 3310
+      MAIL_INBOX: ${MAIL_INBOX:-INBOX}
+      MAIL_SPAM: ${MAIL_SPAM:-Spam}
+      MAIL_FILTERED: ${MAIL_FILTERED:-Filtered}
+      MAIL_TO_READ: ${MAIL_TO_READ:-ToRead}
+      MAIL_NOTIFICATION: ${MAIL_NOTIFICATION:-Notification}
+      SPAM_THRESHOLD: ${SPAM_THRESHOLD:-5}
+      PHISHING_THRESHOLD: ${PHISHING_THRESHOLD:-7}
+      SYNC_INTERVAL: ${SYNC_INTERVAL:-300}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      TZ: Europe/Paris
+    depends_on:
+      - mail-rspamd
+      - mail-clamav
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+networks:
+  schub:
+    external: true
