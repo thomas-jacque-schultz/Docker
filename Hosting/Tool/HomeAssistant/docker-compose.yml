@@ -67,7 +67,7 @@ services:
           - node.labels.name == dynamis
 
   homeassistant-core:
-    image: ghcr.io/home-assistant/home-assistant:stable
+    image: ghcr.io/home-assistant/home-assistant:2026.5
     networks:
       - schub
     volumes:
