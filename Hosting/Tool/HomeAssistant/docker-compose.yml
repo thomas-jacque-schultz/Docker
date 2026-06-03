@@ -31,6 +31,20 @@ volumes:
       o: bind
       device: /mnt/volume/HomeAssistant/Connecteurs/Linky
 
+  frigate_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/HomeAssistant/Connecteurs/Frigate/Config
+
+  frigate_media:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/HomeAssistant/Connecteurs/Frigate/Media
+
 # Secrets
 
 secrets:
@@ -125,8 +139,34 @@ services:
         constraints:  
           - node.labels.name == dynamis
 
-# Networks
+  homeassistant-frigate:
+    image: ghcr.io/blakeblackshear/frigate:stable
+    networks:
+      - schub
+    volumes:
+      - frigate_config:/config
+      - frigate_media:/media/frigate
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Paris
+    ports:
+      - "5000:5000"
+      - "8554:8554"   # RTSP streams
+      - "8555:8555/tcp"  # WebRTC over tcp
+      - "8555:8555/udp"  # WebRTC over udp
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
 
+
+
+# Networks
 networks:
   schub:
     external: true
