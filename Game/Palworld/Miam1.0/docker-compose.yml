@@ -1,0 +1,81 @@
+#Principale Network Configuration
+
+networks:
+  schub:
+    external: true
+
+
+#Log Configuration
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    tag: "{{.Name}}"
+
+#Container Configuration
+
+services:
+
+  gaming-palworld-miam-1-0:
+    image: thijsvanloef/palworld-server-docker:v2.5.1
+    networks:
+      - schub
+    ports:
+      - 8215:8215/udp
+      - 27020:27020/udp
+    volumes:
+      - palworld_data_miam_1_0:/palworld/
+    stop_grace_period: 30s # Set to however long you are willing to wait for the container to gracefully stop
+    environment:
+      AUTO_UPDATE_ENABLED: "true"
+      PUID: 1000
+      PGID: 1000
+      PORT: "8215"
+      PUBLIC_PORT: "8215"
+      PUBLIC_IP: "82.67.147.233"
+      QUERY_PORT: "27020"
+      PLAYERS: "16"
+      SERVER_PASSWORD: "add"
+      MULTITHREADING: "true"
+      RCON_ENABLED: "true"
+      RCON_PORT: "25576"
+      TZ: "UTC"
+      ADMIN_PASSWORD: "ThisIsASecurePassword"
+      PAL_EGG_DEFAULT_HATCHING_TIME: "0.5000"
+      COMMUNITY: "true"
+      SERVER_NAME: "Miam 1.0"
+      SERVER_DESCRIPTION: "Miam community server for the Palworld game"
+      BASE_CAMP_MAX_NUM: "200"
+      AUTO_REBOOT_ENABLED: "true"
+      AUTO_REBOOT_WARN_MINUTES: "10"
+      AUTO_REBOOT_EVEN_IF_PLAYERS_ONLINE: "false"
+      AUTO_REBOOT_CRON_EXPRESSION: "0 */4 * * *"
+      MAX_BUILDING_LIMIT_NUM : "0"
+      BASE_CAMP_WORKER_MAX_NUM : "50"
+      PLAYER_STAMINA_DECREASE_RATE : "0.300000"
+      PAL_CAPTURE_RATE : "2.000000"
+      EXP_RATE : "1.000000"
+      ALLOW_GLOBAL_PALBOX_EXPORT : "true"
+      ALLOW_GLOBAL_PALBOX_IMPORT : "true"
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 12G
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == loki
+
+
+# Volume
+
+volumes:
+  palworld_data_miam_1_0:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/Palworld/Palworld_Miam1.0
