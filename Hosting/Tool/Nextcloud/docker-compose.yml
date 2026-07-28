@@ -36,7 +36,7 @@ x-logging:
 
 services:
   nextcloud:
-    image: nextcloud
+    image: nextcloud:32.0.12
     networks:
       - schub
     volumes:
@@ -54,6 +54,23 @@ services:
       PHP_UPLOAD_LIMIT: 100G
       PHP_MEMORY_LIMIT: 100G
     logging: *default-logging 
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  collabora:
+    image: collabora/code:24.04.7.1.2
+    networks:
+      - schub
+    environment:
+      domain: nextcloud\.schultz-thomas\.fr
+      server_name: collabora.schultz-thomas.fr
+      DONT_GEN_SSL_CERT: "YES"
+      extra_params: --o:ssl.enable=false --o:ssl.termination=true --o:logging.level=warning
+    logging: *default-logging
     deploy:
       restart_policy:
         condition: any
