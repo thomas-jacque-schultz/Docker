@@ -15,6 +15,12 @@ volumes:
       type: none
       device: /mnt/volume/CodeServer/Config
       o: bind
+  code_server_home:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/CodeServer/Home
+      o: bind
   grafana_data:
     driver: local
     driver_opts:
@@ -87,11 +93,12 @@ services:
           - node.labels.name == dynamis
 
   admin-code-server:
-    image: lscr.io/linuxserver/code-server:4.116.0
+    image: lscr.io/linuxserver/code-server:4.131.0
     networks:
       - schub
     volumes:
       - code_server_config:/config
+      - code_server_home:/home/coder
       - /home/pisel:/home/coder/project
       - /var/run/docker.sock:/var/run/docker.sock
     secrets:
@@ -100,6 +107,7 @@ services:
       PUID: 0
       PGID: 0
       TZ: Europe/Paris
+      DEFAULT_WORKSPACE: /home/coder/project/projet
       FILE__PASSWORD: /run/secrets/CODE_SERVER_PASSWORD
     logging: *default-logging
     deploy:
