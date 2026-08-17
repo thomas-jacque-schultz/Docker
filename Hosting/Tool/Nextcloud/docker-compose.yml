@@ -36,7 +36,7 @@ x-logging:
 
 services:
   nextcloud:
-    image: nextcloud:32.0.12
+    image: nextcloud:33.0.8
     networks:
       - schub
     volumes:
@@ -62,7 +62,7 @@ services:
           - node.labels.name == dynamis
 
   collabora:
-    image: collabora/code:24.04.7.1.2
+    image: collabora/code:26.04.3.1.1
     networks:
       - schub
     environment:
