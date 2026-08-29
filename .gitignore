@@ -20,3 +20,7 @@ buildNumber.properties
 # ingnore env file
 .env
 *.env
+
+# les .example de ce repo contiennent parfois de vraies valeurs (pas que des
+# placeholders) — jamais commités, quel que soit le dossier
+*.example
