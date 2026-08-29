@@ -1,0 +1,35 @@
+version: "3"
+
+vars:
+  COMPOSE_CMD: docker compose --env-file .env.dev.example -f docker-compose.dev.yml
+
+tasks:
+  dev:
+    desc: "Lance/relance l'environnement de dev (pas de rebuild, source montée en volume)"
+    cmds:
+      - "{{.COMPOSE_CMD}} up -d"
+
+  dev:rebuild:
+    desc: "Rebuild les images (usage - après un changement de pom.xml/package.json/Dockerfile)"
+    cmds:
+      - "{{.COMPOSE_CMD}} up --build -d --force-recreate"
+
+  dev:restart:
+    desc: "Redémarre un service sans rebuild. Usage: task dev:restart -- bot-back"
+    cmds:
+      - "{{.COMPOSE_CMD}} restart {{.CLI_ARGS}}"
+
+  down:
+    desc: "Arrête tous les conteneurs"
+    cmds:
+      - "{{.COMPOSE_CMD}} down"
+
+  logs:
+    desc: "Affiche les logs. Usage: task logs (tous) ou task logs -- bot-back"
+    cmds:
+      - "{{.COMPOSE_CMD}} logs -f {{.CLI_ARGS}}"
+
+  clean:
+    desc: "Arrête tout, supprime volumes + réseaux orphelins de cet environnement de dev"
+    cmds:
+      - "{{.COMPOSE_CMD}} down -v --remove-orphans"
