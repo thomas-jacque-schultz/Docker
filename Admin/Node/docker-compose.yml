@@ -94,6 +94,7 @@ services:
       - /mnt/volume/Samba/smb.conf:/container/config/samba/smb.conf:ro
     environment:
       TZ: Europe/Paris
+      SAMBA_CONF_MAP_TO_GUEST: Never
     entrypoint:
       - /bin/sh
       - -c
