@@ -34,6 +34,8 @@ services:
     logging: *default-logging
     volumes:
       - vault_data:/data
+    secrets:
+      - VAULT_TOKEN
     environment:
       DOMAIN: "https://vault.schultz-thomas.fr"
       ADMIN_TOKEN_FILE: /run/secrets/VAULT_TOKEN
