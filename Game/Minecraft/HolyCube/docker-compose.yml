@@ -22,7 +22,7 @@ x-logging:
 services:
 
   gaming-minecraft-holycube:
-    image: itzg/minecraft-server:latest
+    image: itzg/minecraft-server:java25
     networks:
       - schub
     ports:

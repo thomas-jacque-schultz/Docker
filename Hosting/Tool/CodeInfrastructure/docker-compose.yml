@@ -30,6 +30,10 @@ x-logging: &default-logging
     tag: "{{.Name}}"
 
 # Services
+#
+# Images poussées par release.yml (repo Schub) -> release-docker.yml de chaque
+# sous-repo, sous le namespace Docker Hub thomasschultzschub. Le tag doit être
+# bumpé manuellement ici à chaque release (pas encore automatisé).
 
 services:
   bot-mongo:
@@ -59,8 +63,8 @@ services:
         constraints:
           - node.labels.name == dynamis
 
-  discord-bot:
-    image: schub/discord-bot:latest
+  bot-back:
+    image: thomasschultzschub/discord-bot:v1.2.3
     networks:
       - schub
     environment:
@@ -69,6 +73,7 @@ services:
       DISCORD_ADMIN_ID: 245281978054737920
       DISCORD_ADMIN_USERNAME: admin
       PORTAINER_VIRTUAL_HOST: default-value
+      BOT_INTERNAL_SECRET: ${BOT_INTERNAL_SECRET}
       TZ: Europe/Paris
     secrets:
       - source: MONGO_ROOT_USERNAME
@@ -87,16 +92,51 @@ services:
         constraints:
           - node.labels.name == dynamis
 
-  game-front:
-    image: schub/game-front:latest
+  bot-front:
+    image: thomasschultzschub/bot-front:v1.2.3
     networks:
       - schub
     depends_on:
-      - discord-bot
+      - bot-back
     ports:
       - "8080:80"
     environment:
       TZ: Europe/Paris
+    logging: *default-logging
+    deploy:
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.name == dynamis
+
+  schub-back:
+    image: thomasschultzschub/schub-back:v1.2.3
+    networks:
+      - schub
+    environment:
+      # Même Mongo que bot-back, base séparée. MONGO_ROOT_USERNAME/PASSWORD sont
+      # des secrets Docker (fichiers) pour bot-mongo/bot-back, pas des variables
+      # de compose — ${...} ne peut pas les lire ici. Il faut redéfinir les mêmes
+      # valeurs comme variables d'environnement Portainer (Stack -> Environment
+      # variables), en plus des secrets Docker déjà en place, pour que cette
+      # substitution fonctionne.
+      SPRING_DATA_MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@bot-mongo:27017/backend?authSource=admin
+      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET}
+      AUTH_JWT_EXPIRATION_SECONDS: 3600
+      AUTH_ADMIN_USERNAME: ${AUTH_ADMIN_USERNAME}
+      AUTH_ADMIN_PASSWORD: ${AUTH_ADMIN_PASSWORD}
+      AUTH_CORS_ALLOWED_ORIGINS: https://dev.schultz-thomas.fr
+      BOT_BASE_URL: http://bot-back:8080
+      BOT_INTERNAL_SECRET: ${BOT_INTERNAL_SECRET}
+      TZ: Europe/Paris
+    depends_on:
+      bot-mongo:
+        condition: service_healthy
+      bot-back:
+        condition: service_started
+    ports:
+      - "8082:8080"
     logging: *default-logging
     deploy:
       restart_policy:

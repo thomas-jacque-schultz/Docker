@@ -19,7 +19,7 @@ x-logging:
 services:
 
   gaming-palworld:
-    image: thijsvanloef/palworld-server-docker:latest
+    image: thijsvanloef/palworld-server-docker@sha256:be3ad49e373045a7b60478fd8b7f7411c1e293713dfa4733e563e798f276d688
     networks:
       - schub
     ports:
@@ -34,12 +34,12 @@ services:
       PGID: 1000
       PORT: "8211"
       PLAYERS: "16"
-      SERVER_PASSWORD: "add"
+      SERVER_PASSWORD: "${SERVER_PASSWORD}"
       MULTITHREADING: "true"
       RCON_ENABLED: "true"
       RCON_PORT: "25575"
       TZ: "UTC"
-      ADMIN_PASSWORD: "add"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
       PAL_EGG_DEFAULT_HATCHING_TIME: "0.400000"
       COMMUNITY: "true"
       SERVER_NAME: "World of MIAM"

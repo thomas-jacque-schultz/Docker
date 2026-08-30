@@ -71,7 +71,7 @@ x-logging: &default-logging
 
 services:
   admin-portainer:
-    image: portainer/portainer-ee:latest
+    image: portainer/portainer-ee@sha256:18750221de87f489fffc3d52a23799e9c6a83aab0f1a5337824c81e12bf552b5
     networks:
       - schub
     volumes:
@@ -169,7 +169,7 @@ services:
           - node.labels.name == dynamis
 
   cloudflare-tunnel:
-    image: cloudflare/cloudflared:latest
+    image: cloudflare/cloudflared@sha256:0aa26e284f05e6c77ae375b8c9c11d9eb6a448fb7bcd8d40f31cb6176189eb38
     networks:
       - monitoring
       - schub

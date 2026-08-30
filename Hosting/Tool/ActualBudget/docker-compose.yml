@@ -14,7 +14,7 @@ x-logging:
 # Container Configuration
 services:
   actual:
-    image: actualbudget/actual-server:latest
+    image: actualbudget/actual-server@sha256:6478d9ddfc0924479c09e6699c205e354c6f2216dfe7de3c0fb7b590d6edcdc5
     networks:
       - schub
     volumes:

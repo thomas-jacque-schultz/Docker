@@ -13,7 +13,7 @@ x-logging: &default-logging
 
 services:
   gaming-assetto-corsa-miam:
-    image: seejy/assetto-server-manager:latest
+    image: seejy/assetto-server-manager@sha256:49b8c3b1e7e71a1584ce930bffc10d95384fe710eed5802bcf31d74671652f33
     networks:
       - schub
     ports:

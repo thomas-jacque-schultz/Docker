@@ -28,7 +28,7 @@ x-logging:
 
 services:
   vaultwarden:
-    image: vaultwarden/server:latest
+    image: vaultwarden/server:1.37.2
     networks:
       - schub
     logging: *default-logging

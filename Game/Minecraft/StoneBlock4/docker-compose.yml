@@ -20,7 +20,7 @@ x-logging:
 # Container Configuration
 services:
   gaming-minecraft-stoneblock4:
-    image: itzg/minecraft-server:latest
+    image: itzg/minecraft-server:java25
     networks:
       - schub
     ports:

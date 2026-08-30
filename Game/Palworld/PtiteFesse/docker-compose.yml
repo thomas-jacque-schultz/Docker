@@ -18,7 +18,7 @@ x-logging:
 services:
 
   gaming-palworld-ptite-fesse:
-    image: thijsvanloef/palworld-server-docker:latest
+    image: thijsvanloef/palworld-server-docker@sha256:be3ad49e373045a7b60478fd8b7f7411c1e293713dfa4733e563e798f276d688
     networks:
       - schub
     ports:
@@ -34,12 +34,12 @@ services:
       PORT: "8212"
       QUERY_PORT: "27016"
       PLAYERS: "16"
-      SERVER_PASSWORD: "add"
+      SERVER_PASSWORD: "${SERVER_PASSWORD}"
       MULTITHREADING: "true"
       RCON_ENABLED: "true"
       RCON_PORT: "25576"
       TZ: "UTC"
-      ADMIN_PASSWORD: "ThisIsASecurePassword"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
       PAL_EGG_DEFAULT_HATCHING_TIME: "0.000000"
       COMMUNITY: "true"
       SERVER_NAME: "ptite fesse"

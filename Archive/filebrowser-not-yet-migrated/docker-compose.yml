@@ -1,0 +1,28 @@
+# Extrait de l'ancien Archive/Media/docker-compose.yml (pré-swarm) au moment du
+# nettoyage d'Archive : sonarr/radarr/jellyfin étaient déjà réutilisés sous
+# Hosting/Tool/Media, filebrowser n'a lui jamais été recréé côté swarm.
+# Chemins réels d'origine (Archive/Media/.env, jamais tracké par git) :
+#   ROOT_PROJECT_DATA_DIR=/home/pisel/projet/Data
+#   MOVIE_SAVE_PATH=/home/data/hdd_media
+#   DOWNLOAD_PATH=download
+#   FILE_BROWSER_CONTAINER_NAME=media-file-browser
+#   FILE_BROWSER_EXTERNAL_PORT=15280
+#   FILE_BROWSER_CONFIG_PATH=Movie_Stack/FileBrowser
+#
+# À convertir au format swarm (driver_opts bind sur /mnt/volume/..., réseau
+# "schub" externe, deploy.restart_policy) le jour où on le rajoute pour de bon.
+
+services:
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: media-file-browser
+    ports:
+      - 15280:80
+    volumes:
+      - /home/data/hdd_media/download:/srv                                # dossier des téléchargements (Radarr)
+      - /home/pisel/projet/Data/Movie_Stack/FileBrowser/config:/config    # config File Browser
+      - /home/pisel/projet/Data/Movie_Stack/FileBrowser/database:/database # DB utilisateurs/prefs
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000

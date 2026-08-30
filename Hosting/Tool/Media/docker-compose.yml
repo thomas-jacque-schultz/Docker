@@ -72,7 +72,7 @@ x-logging:
 services:
 
   media-sonarr:
-    image: linuxserver/sonarr:latest
+    image: linuxserver/sonarr:4.0.19.2979-ls322
     networks:
       - schub
     environment:
@@ -92,7 +92,7 @@ services:
           - node.labels.name == dynamis
 
   media-radarr:
-    image: linuxserver/radarr:latest
+    image: linuxserver/radarr:6.3.0.10514-ls314
     networks:
       - schub
     environment:
@@ -112,7 +112,7 @@ services:
           - node.labels.name == dynamis
 
   media-jellyfin:
-    image: jellyfin/jellyfin:latest
+    image: jellyfin/jellyfin:10.11.11
     networks:
       - schub
     environment:

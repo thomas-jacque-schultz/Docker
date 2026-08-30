@@ -29,7 +29,7 @@ x-logging:
 services:
 
   gaming-minecraft-miam:
-    image: itzg/minecraft-server:latest
+    image: itzg/minecraft-server:java25
     networks:
       - schub
     ports:

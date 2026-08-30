@@ -64,7 +64,7 @@ x-logging:
 services:
 
   homeassistant-mqtt:
-    image: eclipse-mosquitto:latest
+    image: eclipse-mosquitto:2.1.2
     networks:
       - schub
     volumes:

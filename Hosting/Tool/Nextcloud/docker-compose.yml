@@ -79,7 +79,7 @@ services:
           - node.labels.name == dynamis
 
   nextcloud_db:
-    image: mariadb
+    image: mariadb:12.3.3
     networks:
       - schub
     volumes:

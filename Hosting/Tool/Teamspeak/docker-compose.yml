@@ -22,7 +22,7 @@ x-logging:
 
 services:
   teamspeak:
-    image: teamspeaksystems/teamspeak6-server:latest
+    image: teamspeaksystems/teamspeak6-server@sha256:1938d31c2ed36af175049e9612f0bd2db2e492263818a5cd52683dd5482aaf99
     networks:
       - schub
     ports:

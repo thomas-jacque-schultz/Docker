@@ -23,7 +23,7 @@ x-logging:
 services:
 
   homepage:
-    image: ghcr.io/gethomepage/homepage:latest
+    image: ghcr.io/gethomepage/homepage:v2.1.2
     networks:
       - schub
     volumes:

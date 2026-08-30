@@ -91,7 +91,7 @@ services:
           - node.labels.name == dynamis
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
+    image: phpmyadmin/phpmyadmin:5.2.3
     container_name: dymas-phpmyadmin
     networks:
       - schub

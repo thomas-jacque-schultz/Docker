@@ -37,7 +37,7 @@ x-logging:
 services:
 
   portainer-agent:
-    image: portainer/agent:latest
+    image: portainer/agent@sha256:d63bfe57a106070fa5c0e73de0758f33aea018ed3cb6c8610c6663a4ac3a82ba
     networks:
       - schub
     volumes:
