@@ -64,7 +64,7 @@ services:
           - node.labels.name == dynamis
 
   bot-back:
-    image: thomasschultzschub/discord-bot:v1.2.3
+    image: thomasschultzschub/discord-bot:v1.2.4
     networks:
       - schub
     environment:
@@ -93,7 +93,7 @@ services:
           - node.labels.name == dynamis
 
   bot-front:
-    image: thomasschultzschub/bot-front:v1.2.3
+    image: thomasschultzschub/bot-front:v1.2.4
     networks:
       - schub
     depends_on:
@@ -111,7 +111,7 @@ services:
           - node.labels.name == dynamis
 
   schub-back:
-    image: thomasschultzschub/schub-back:v1.2.3
+    image: thomasschultzschub/schub-back:v1.2.4
     networks:
       - schub
     environment:
