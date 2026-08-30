@@ -2,27 +2,32 @@ version: "3.8"
 
 # Partage de fichiers SMB (lecteurs réseau Windows).
 #
-# POURQUOI DEUX SERVICES ET PAS UN SEUL EN MODE GLOBAL
-# Un service global reçoit des variables d'environnement identiques sur tous
-# les noeuds. Or cette image construit son smb.conf à partir de ces variables,
-# et les partages diffèrent d'un serveur à l'autre : dynamis porte les disques
-# bulk (media, usb_drive) alors que loki n'a que son /mnt/volume local. Un
-# service global déclarerait donc des partages vers des chemins inexistants sur
-# loki -- et Docker crée silencieusement un dossier vide dans ce cas, ce qui
-# exposerait des partages vides au lieu d'échouer visiblement.
-# D'où : une seule stack (déployée une fois), deux services contraints chacun
-# à son noeud.
+# UN SEUL SERVICE EN MODE GLOBAL
+# Le spec est identique sur tous les noeuds, mais deux montages le rendent
+# spécifique à chaque serveur :
+#   - /mnt:/shares          -> chaque noeud n'expose que les disques qu'il a
+#                              réellement (dynamis: media/volume/usb_drive/data,
+#                              loki: volume seulement)
+#   - le smb.conf local     -> déclare les partages propres à ce serveur
+# C'est le même principe que portainer-agent avec /var/run/docker.sock :
+# même chemin déclaré, contenu différent par noeud.
 #
-# POURQUOI LES PORTS SONT EN MODE HOST
-# En mode ingress (le défaut), un port publié l'est à l'échelle du cluster :
-# les deux services se disputeraient le 445. En mode host, chacun ne l'ouvre
-# que sur son propre noeud.
+# ATTENTION : le smb.conf doit exister sur les DEUX noeuds avant le déploiement.
+# Docker qui bind-monte un fichier absent crée un *dossier* à sa place, et
+# l'init du conteneur échouera de façon peu lisible. Voir README.md.
 #
-# PRÉREQUIS : le smbd natif doit être désactivé sur les deux serveurs, sinon
-# il occupe déjà le port 445 et les conteneurs ne démarreront jamais.
+# /mnt est monté en entier, mais seuls les partages déclarés dans smb.conf sont
+# exposés. /mnt/data (Nextcloud) n'est volontairement déclaré nulle part :
+# écrire dedans par SMB désynchronise sa base de métadonnées.
 #
-# MOTS DE PASSE : à définir dans Portainer (Stack -> Environment variables),
-# comme pour les stacks Palworld. Voir .env.example. Rien en clair ici.
+# PORTS EN MODE HOST : en mode ingress (défaut), le port serait publié à
+# l'échelle du cluster, ce qui n'a pas de sens pour un service par noeud.
+#
+# PRÉREQUIS : smbd natif désactivé sur les deux serveurs, sinon le port 445 est
+# déjà pris et le conteneur ne démarrera jamais.
+#
+# MOTS DE PASSE : définis dans Portainer (Stack -> Environment variables),
+# comme les stacks Palworld. Voir .env.example. Rien en clair ici.
 
 x-logging: &default-logging
   driver: "json-file"
@@ -30,32 +35,26 @@ x-logging: &default-logging
     tag: "{{.Name}}"
 
 services:
-  # ---------------------------------------------------------------- dynamis
-  # Stockage bulk + volumes Docker locaux.
-  samba-dynamis:
+  samba:
     image: ghcr.io/servercontainers/samba:smbd-wsdd2-a3.24.1-s4.23.8-r0
     networks:
       - schub
     volumes:
-      - /mnt/media:/shares/media
-      - /mnt/volume:/shares/volume
-      - /mnt/usb_drive:/shares/usb_drive
-      # /mnt/data (Nextcloud) volontairement non partagé : écrire dedans par
-      # SMB désynchronise la base de métadonnées de Nextcloud.
+      - /mnt:/shares
+      - /mnt/volume/Samba/smb.conf:/container/config/samba/smb.conf:ro
     environment:
       TZ: Europe/Paris
-      SAMBA_CONF_WORKGROUP: WORKGROUP
-      SAMBA_CONF_SERVER_STRING: dynamis
-      SAMBA_CONF_MAP_TO_GUEST: Never
 
+      # Comptes créés sur chaque noeud. Les partages qui les référencent sont
+      # définis dans le smb.conf local, donc un compte sans partage sur un
+      # noeud (media sur loki) est simplement inutilisé.
       ACCOUNT_pisel: ${SAMBA_PASSWORD_PISEL}
       UID_pisel: 1000
       ACCOUNT_media: ${SAMBA_PASSWORD_MEDIA}
-      UID_media: 1001
+      UID_media: ${SAMBA_UID_MEDIA}
 
-      SAMBA_VOLUME_CONFIG_media: "[media]; path = /shares/media; valid users = pisel, media; read only = no; browseable = yes"
-      SAMBA_VOLUME_CONFIG_volume: "[volume]; path = /shares/volume; valid users = pisel; read only = no; browseable = yes"
-      SAMBA_VOLUME_CONFIG_usb: "[usb_drive]; path = /shares/usb_drive; valid users = pisel; read only = no; browseable = yes"
+      # Aucun SAMBA_VOLUME_CONFIG_* ici : l'entrypoint les ajouterait par-dessus
+      # le smb.conf monté. Les partages se déclarent dans le fichier.
     ports:
       - target: 445
         published: 445
@@ -63,42 +62,9 @@ services:
         mode: host
     logging: *default-logging
     deploy:
+      mode: global
       restart_policy:
         condition: any
-      placement:
-        constraints:
-          - node.labels.name == dynamis
-
-  # ------------------------------------------------------------------- loki
-  # Uniquement ses volumes Docker locaux (configs des serveurs de jeux).
-  samba-loki:
-    image: ghcr.io/servercontainers/samba:smbd-wsdd2-a3.24.1-s4.23.8-r0
-    networks:
-      - schub
-    volumes:
-      - /mnt/volume:/shares/volume
-    environment:
-      TZ: Europe/Paris
-      SAMBA_CONF_WORKGROUP: WORKGROUP
-      SAMBA_CONF_SERVER_STRING: loki
-      SAMBA_CONF_MAP_TO_GUEST: Never
-
-      ACCOUNT_pisel: ${SAMBA_PASSWORD_PISEL}
-      UID_pisel: 1000
-
-      SAMBA_VOLUME_CONFIG_volume: "[volume]; path = /shares/volume; valid users = pisel; read only = no; browseable = yes"
-    ports:
-      - target: 445
-        published: 445
-        protocol: tcp
-        mode: host
-    logging: *default-logging
-    deploy:
-      restart_policy:
-        condition: any
-      placement:
-        constraints:
-          - node.labels.name == loki
 
 networks:
   schub:
