@@ -85,10 +85,6 @@ services:
       restart_policy:
         condition: any
 
-  # /mnt:/shares + le smb.conf local: même chemin partout, contenu propre à
-  # chaque noeud, donc chacun n'expose que ses disques. Le fichier doit exister
-  # avant le déploiement (bind d'un fichier absent = Docker crée un dossier).
-  # Port en mode host, et smbd natif à désactiver: sinon 445 est déjà pris.
   samba:
     image: ghcr.io/servercontainers/samba:smbd-wsdd2-a3.24.1-s4.23.8-r0
     networks:
@@ -98,10 +94,12 @@ services:
       - /mnt/volume/Samba/smb.conf:/container/config/samba/smb.conf:ro
     environment:
       TZ: Europe/Paris
-      ACCOUNT_pisel: ${SAMBA_PASSWORD_PISEL}
-      UID_pisel: 1000
-      ACCOUNT_media: ${SAMBA_PASSWORD_MEDIA}
-      UID_media: ${SAMBA_UID_MEDIA}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - "set -a; . /shares/volume/Samba/accounts.env; set +a; exec /container/scripts/entrypoint.sh \"$$@\""
+      - sh
+    command: ["runsvdir", "-P", "/container/config/runit"]
     ports:
       - target: 445
         published: 445
