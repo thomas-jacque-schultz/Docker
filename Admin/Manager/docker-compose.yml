@@ -100,6 +100,10 @@ services:
       - code_server_config:/config
       - code_server_home:/home/coder
       - /home/pisel:/home/coder/project
+      - /mnt/volume:/home/coder/project/projet/schub-storage/volume
+      - /mnt/media:/home/coder/project/projet/schub-storage/media
+      - /mnt/usb_drive:/home/coder/project/projet/schub-storage/usb_drive
+      - /mnt/data:/home/coder/project/projet/schub-storage/data:ro
       - /var/run/docker.sock:/var/run/docker.sock
     secrets:
       - CODE_SERVER_PASSWORD
