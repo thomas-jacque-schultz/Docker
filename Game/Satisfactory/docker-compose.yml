@@ -33,9 +33,13 @@ services:
       AUTOPAUSE: "true"
       AUTOSAVEINTERVAL: "300"
       NETWORKQUALITY: "3"
-    stop_grace_period: 30s
+    stop_grace_period: 120s
     logging: *default-logging
     deploy:
+      update_config:
+        order: stop-first
+        failure_action: continue
+        delay: 30s
       resources:
         limits:
           memory: 16G
