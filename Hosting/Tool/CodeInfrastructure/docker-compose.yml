@@ -9,6 +9,14 @@ volumes:
       type: none
       o: bind
       device: /mnt/volume/BotFront/Database
+  # Règles de redirection permanentes, éditées à la main (port-forwarding.yml).
+  # Relues au redémarrage de bot-back.
+  port_forwarding_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/volume/PortForwarding
 
 # Secrets
 
@@ -20,6 +28,8 @@ secrets:
   DISCORD_TOKEN:
     external: true
   PORTAINER_TOKEN:
+    external: true
+  FREEBOX_APP_TOKEN:
     external: true
 
 # Log Configuration
@@ -74,14 +84,27 @@ services:
       DISCORD_ADMIN_USERNAME: admin
       PORTAINER_VIRTUAL_HOST: default-value
       BOT_INTERNAL_SECRET: ${BOT_INTERNAL_SECRET}
+      # Pilotage des redirections de ports : les ports des serveurs de jeu ne sont
+      # ouverts que pendant qu'ils tournent. loki est le nœud où les stacks de jeu
+      # sont contraintes, donc la cible des redirections.
+      PORT_FORWARDING_ENABLED: "true"
+      # true au premier déploiement : le bot lit la box et journalise ce qu'il ferait
+      # sans rien modifier. À repasser à false une fois les logs vérifiés.
+      PORT_FORWARDING_DRY_RUN: "true"
+      PORT_FORWARDING_DEFAULT_LAN_IP: 192.168.1.202
+      # Identité de l'application côté Freebox (bloc infra, à changer si la box change).
+      FREEBOX_DEVICE_NAME: dynamis
       TZ: Europe/Paris
     secrets:
       - source: MONGO_ROOT_USERNAME
       - source: MONGO_ROOT_PASSWORD
       - source: DISCORD_TOKEN
       - source: PORTAINER_TOKEN
+      - source: FREEBOX_APP_TOKEN
     depends_on:
       - bot-mongo
+    volumes:
+      - port_forwarding_config:/etc/schub
     ports:
       - "8081:8080"
     logging: *default-logging

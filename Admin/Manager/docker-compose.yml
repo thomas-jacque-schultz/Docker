@@ -104,6 +104,7 @@ services:
       - /mnt/media:/home/coder/project/projet/schub-storage/media
       - /mnt/usb_drive:/home/coder/project/projet/schub-storage/usb_drive
       - /mnt/data:/home/coder/project/projet/schub-storage/data:ro
+      - /mnt/loki/volume:/home/coder/project/projet/schub-storage/loki
       - /var/run/docker.sock:/var/run/docker.sock
     secrets:
       - CODE_SERVER_PASSWORD
