@@ -15,6 +15,12 @@ volumes:
       type: none
       device: /mnt/volume/CodeServer/Config
       o: bind
+  code_server_custom_init:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume/CodeServer/Config/custom-cont-init.d
+      o: bind
   code_server_home:
     driver: local
     driver_opts:
@@ -98,6 +104,7 @@ services:
       - schub
     volumes:
       - code_server_config:/config
+      - code_server_custom_init:/custom-cont-init.d
       - code_server_home:/home/coder
       - /home/pisel:/home/coder/project
       - /mnt/volume:/home/coder/project/projet/schub-storage/volume
